@@ -1,4 +1,4 @@
-# 🥗 Local Chef Bazaar  
+# 🥗 LocalChef  
 ### A Full Stack MERN Marketplace for Local Home-Cooked Meals
 
 🌐 **Live Website**  
