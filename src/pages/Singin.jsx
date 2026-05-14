@@ -264,17 +264,6 @@ const SignIn = () => {
             Sign Up
           </NavLink>{' '}
           <br />
-          <div className="text-left">
-            {' '}
-            <div className="mt-10 ">
-              <span className=" ">Admin credentials :-</span> <br />
-              <span className="text-red-500">Email:</span>{' '}
-              <span className="text-gray-500 ml-2"> hakimcolor777@gmail.com</span>
-              <br />
-              <span className="text-red-500 ">Password:</span>{' '}
-              <span className="text-gray-500 ml-2"> hakimcolor777@gmail.comH</span>
-            </div>
-          </div>
         </p>
       </div>
     </div>

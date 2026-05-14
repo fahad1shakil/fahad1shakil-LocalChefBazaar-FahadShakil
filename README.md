@@ -2,9 +2,9 @@
 ### A Full Stack MERN Marketplace for Local Home-Cooked Meals
 
 🌐 **Live Website**  
-https://localchefbazaarbyhakimcolor.netlify.app/
-Admin Email: *hakimcolor777@gmail.com*
-Adimn Password: hakimcolor777@gmail.comH
+[Live Link Coming Soon]  
+Admin Email: [Provided on Request]  
+Admin Password: [Provided on Request]  
 ---
 
 ## 📌 Project Description
@@ -15,7 +15,7 @@ The platform includes **role-based authentication**, **multiple dashboards**, **
 This project reflects a real-world marketplace system built using modern full-stack technologies.
 
 ---
-<img width="1920" height="1336" alt="hakimcolor" src="https://github.com/user-attachments/assets/e8b99706-b76f-4912-a632-483ea4048338" />
+<img width="1920" height="1336" alt="LocalChefBazaar Interface" src="https://github.com/user-attachments/assets/e8b99706-b76f-4912-a632-483ea4048338" />
 
 ## 🚀 Core Features
 
@@ -100,8 +100,8 @@ Each role has **separate protected routes and permissions**.
 
 > ⚠️ Demo credentials for testing purposes only
 
-**Admin Email: hakimcolor777@gmail.com
-**Adimn Password: hakimcolor777@gmail.comH
+**Admin Email: [Provided on Request]
+**Admin Password: [Provided on Request]
 
 
 You can also create a new user account and request for the **Chef role** from the user dashboard.
