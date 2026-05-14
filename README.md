@@ -120,13 +120,19 @@ local-chef-bazaar/
 └── README.md
 
 
+## 👨‍💻 Author
+
+**Fahad Shakil**  
+📧 Email: [fahad1shakil@gmail.com](mailto:fahad1shakil@gmail.com)  
+🔗 GitHub: [fahad1shakil](https://github.com/fahad1shakil)
+
 ---
 
 ## ⚙️ How to Run Locally
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/local-chef-bazaar.git
+git clone https://github.com/fahad1shakil/LocalChef.git
 cd client
 npm install
 
@@ -136,6 +142,6 @@ MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 STRIPE_SECRET_KEY=your_stripe_secret_key
 npm run dev
+```
 
-# LocalChefBazzar-Website
-# LocalChefBazzar-Website
+# LocalChef
