@@ -62,14 +62,14 @@ const Order = () => {
   };
 
   return (
-    <div className="max-w-md sm:max-w-sm mx-auto p-6 mb-5 bg-orange-50 shadow-md rounded-xl border border-orange-200 text-black">
+    <div className="max-w-md sm:max-w-sm mx-auto p-8 mb-10 bg-white dark:bg-[#111111] shadow-2xl rounded-[2.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] transition-colors duration-500 mt-20">
       <title>LocalChefBazaar || order</title>
-      <h2 className="text-2xl sm:text-3xl font-bold text-center text-red-600 mb-6">
-        🍽 Confirm Order: {meal.mealName || meal.foodName}
+      <h2 className="text-xl sm:text-2xl font-black text-center text-slate-900 dark:text-[#e0e0e0] mb-8 tracking-tighter uppercase">
+        Confirm <span className="text-[#6db70e] dark:text-[#7ecf55]">Bazaar</span> Order
       </h2>
 
       <div className="mb-4">
-        <label className="font-semibold text-orange-700 mb-1 block">
+        <label className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-[0.2em] mb-1.5 ml-1 block">
           Meal Name
         </label>
         <input
@@ -130,7 +130,7 @@ const Order = () => {
       </div>
 
       <div className="mb-5">
-        <label className="font-semibold text-orange-700 mb-1 block">
+        <label className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-[0.2em] mb-1.5 ml-1 block">
           Delivery Address <span className="text-red-500">*</span>
         </label>
         <textarea

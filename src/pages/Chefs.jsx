@@ -95,14 +95,33 @@ const Chefs = () => {
     const fetchChefs = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/users/chefs`);
-        if (response.data?.success && response.data.data?.length > 0) {
-          setChefs(response.data.data);
-        } else {
-          setChefs(fallbackChefs); // Use premium fallbacks if empty
-        }
+        const rawDbChefs = response.data?.data || [];
+        
+        // Process DB chefs with high-quality defaults for missing fields
+        const dbChefs = rawDbChefs.map(chef => ({
+          ...chef,
+          profileImg: chef.profileImg || 'https://i.ibb.co/7CMqG7N/default-avatar.jpg',
+          bio: chef.bio || 'An elite culinary artisan dedicated to creating authentic flavors and memorable dining experiences for the Bazaar community.',
+          cuisines: Array.isArray(chef.cuisines) && chef.cuisines.length > 0 
+                    ? chef.cuisines 
+                    : ['Bespoke', 'Artisanal', 'Local Heritage'],
+          role: chef.role === 'chef' ? 'Bazaar Master Chef' : (chef.role || 'Elite Artisan'),
+          address: chef.address || 'Bazaar Marketplace'
+        }));
+        
+        // Merge DB chefs with Fallbacks, ensuring no duplicates by email
+        const mergedChefs = [...dbChefs];
+        
+        fallbackChefs.forEach(fb => {
+          if (!mergedChefs.some(db => db.email.toLowerCase() === fb.email.toLowerCase())) {
+            mergedChefs.push(fb);
+          }
+        });
+
+        setChefs(mergedChefs);
       } catch (err) {
         console.error('Error fetching chefs:', err);
-        setChefs(fallbackChefs); // Use premium fallbacks on error
+        setChefs(fallbackChefs); 
       } finally {
         setLoading(false);
       }
@@ -114,10 +133,10 @@ const Chefs = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#05070a] text-slate-900 dark:text-white pb-32 transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] pb-32 transition-colors duration-500">
       {/* Cinematic Hero Header */}
-      <div className="relative h-[60vh] flex items-center justify-center overflow-hidden mb-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 dark:via-[#05070a]/50 to-white dark:to-[#05070a] z-10" />
+      <div className="relative h-[60vh] flex items-center justify-center overflow-hidden mb-20 bg-slate-50 dark:bg-[#0f0f0f]">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 dark:via-[#0f0f0f]/50 to-white dark:to-[#0f0f0f] z-10" />
         <motion.div 
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.2 }}
@@ -126,14 +145,14 @@ const Chefs = () => {
         />
         
         {/* Animated Glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6db70e]/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-[120px] animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7ecf55]/10 dark:bg-[#7ecf55]/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-[120px] animate-pulse delay-1000 dark:hidden" />
 
         <div className="relative z-20 text-center px-6">
           <motion.h4 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[#6db70e] text-xs font-black uppercase tracking-[0.8em] mb-6"
+            className="text-[#6db70e] dark:text-[#7ecf55] text-xs font-black uppercase tracking-[0.8em] mb-6"
           >
             Bazaar Elite Circle
           </motion.h4>
@@ -141,15 +160,15 @@ const Chefs = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter mb-8 text-slate-900 dark:text-white"
+            className="text-6xl md:text-8xl font-black tracking-tighter mb-8 text-slate-900 dark:text-[#e0e0e0]"
           >
-            MASTER <span className="text-[#6db70e]">CARDS</span>
+            MASTER <span className="text-[#6db70e] dark:text-[#7ecf55]">CARDS</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-slate-500 dark:text-slate-400 font-serif italic max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-slate-500 dark:text-[#888888] font-serif italic max-w-2xl mx-auto"
           >
             Discover the culinary storytellers behind every meal. Our chefs are not just cooks; they are keepers of heritage and innovators of flavor.
           </motion.p>
@@ -166,7 +185,7 @@ const Chefs = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group relative bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[2.5rem] overflow-hidden backdrop-blur-xl hover:bg-white dark:hover:bg-white/10 transition-all duration-500 hover:border-[#6db70e]/30 shadow-2xl"
+                className="group relative bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-[2.5rem] overflow-hidden backdrop-blur-xl hover:bg-white dark:hover:bg-[#151515] transition-all duration-500 hover:border-[#7ecf55]/30 shadow-2xl"
               >
                 {/* Profile Image Section */}
                 <div className="relative h-72 overflow-hidden">
@@ -175,11 +194,11 @@ const Chefs = () => {
                     alt={chef.name}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#05070a] via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#111111] via-transparent to-transparent opacity-80" />
                   
                   {/* Floating Special Label */}
                   <div className="absolute top-6 right-6">
-                    <span className="bg-[#6db70e] text-black text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                    <span className="bg-[#6db70e] dark:bg-[#7ecf55] text-black dark:text-[#0f0f0f] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
                       Bazaar Verified
                     </span>
                   </div>
@@ -187,42 +206,35 @@ const Chefs = () => {
 
                 {/* Content Section */}
                 <div className="p-8 relative">
-                  <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter mb-1 group-hover:text-[#6db70e] transition-colors">
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter mb-1 group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-colors">
                     {chef.name}
                   </h2>
-                  <p className="text-[#6db70e] text-[10px] font-black uppercase tracking-[0.4em] mb-6">
+                  <p className="text-[#6db70e] dark:text-[#7ecf55] text-[10px] font-black uppercase tracking-[0.4em] mb-6">
                     {chef.role}
                   </p>
                   
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 italic">
+                  <p className="text-slate-600 dark:text-[#888888] text-sm leading-relaxed mb-8 line-clamp-3 italic">
                     "{chef.bio}"
                   </p>
 
                   {/* Cuisines Tags */}
                   <div className="flex flex-wrap gap-2 mb-8">
                     {chef.cuisines?.map((c, i) => (
-                      <span key={i} className="text-[9px] font-black uppercase tracking-widest bg-slate-200/50 dark:bg-white/5 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full border border-slate-200 dark:border-white/5 group-hover:border-[#6db70e]/20 transition-all">
+                      <span key={i} className="text-[9px] font-black uppercase tracking-widest bg-slate-200/50 dark:bg-[#151515] text-slate-600 dark:text-[#888888] px-3 py-1 rounded-full border border-slate-200 dark:border-[#242424] dark:border-[0.5px] group-hover:border-[#7ecf55]/20 transition-all">
                         {c}
                       </span>
                     ))}
                   </div>
 
                   {/* Contact Info Footer */}
-                  <div className="pt-8 border-t border-slate-200 dark:border-white/5 space-y-4">
-                    <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-                      <FiMapPin className="text-[#6db70e]" size={16} />
-                      <span className="text-xs font-black uppercase tracking-widest truncate">{chef.address}</span>
+                  <div className="pt-8 border-t border-slate-200 dark:border-[#242424] dark:border-[0.5px] space-y-4">
+                    <div className="flex items-center gap-3 text-slate-500 dark:text-[#888888]">
+                      <FiMapPin className="text-[#6db70e] dark:text-[#7ecf55]" size={16} />
+                      <span className="text-xs font-black uppercase tracking-widest truncate">{chef.address || 'Address Verified'}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-                      <FiMail className="text-[#6db70e]" size={16} />
+                    <div className="flex items-center gap-3 text-slate-500 dark:text-[#888888]">
+                      <FiMail className="text-[#6db70e] dark:text-[#7ecf55]" size={16} />
                       <span className="text-xs font-black tracking-widest truncate">{chef.email}</span>
-                    </div>
-                  </div>
-
-                  {/* Hover Arrow Overlay */}
-                  <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all">
-                    <div className="w-12 h-12 rounded-full bg-[#6db70e] flex items-center justify-center text-black shadow-xl">
-                      <FiArrowRight size={24} />
                     </div>
                   </div>
                 </div>
@@ -238,11 +250,11 @@ const Chefs = () => {
             animate={{ opacity: 1 }}
             className="py-40 text-center"
           >
-            <div className="w-32 h-32 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-10 border border-slate-200 dark:border-white/10">
-              <FiUser size={48} className="text-[#6db70e] opacity-40" />
+            <div className="w-32 h-32 bg-slate-50 dark:bg-[#111111] rounded-full flex items-center justify-center mx-auto mb-10 border border-slate-200 dark:border-[#242424] dark:border-[0.5px]">
+              <FiUser size={48} className="text-[#6db70e] dark:text-[#7ecf55] opacity-40" />
             </div>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter mb-4 uppercase">The Kitchen is Getting Ready</h3>
-            <p className="text-slate-500 dark:text-slate-400 font-serif italic text-lg">Our elite chefs are currently preparing their stories. Check back soon for the grand reveal.</p>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter mb-4 uppercase">The Kitchen is Getting Ready</h3>
+            <p className="text-slate-500 dark:text-[#888888] font-serif italic text-lg">Our elite chefs are currently preparing their stories. Check back soon for the grand reveal.</p>
           </motion.div>
         )}
       </div>

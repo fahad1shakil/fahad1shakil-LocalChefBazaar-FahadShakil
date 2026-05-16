@@ -36,7 +36,7 @@ const Error = () => {
             className="mb-12"
           >
             <img
-              src="/Adobe Express - file.png"
+              src="/logo.png"
               alt="LocalChefBazaar Logo"
               className="w-64 md:w-80 drop-shadow-2xl"
             />

@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/Adobe Express - file.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/LCBZR (1).png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/LCBZR (1).png" />
+    <link rel="shortcut icon" href="/LCBZR (1).png" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/LCBZR (1).png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Google Fonts -->
@@ -10,7 +13,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <title>LocalChefBazaar — Marketplace for Local Home-Cooked Meals</title>
+    <title>LocalChefBazaar — Fahad Shakil</title>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

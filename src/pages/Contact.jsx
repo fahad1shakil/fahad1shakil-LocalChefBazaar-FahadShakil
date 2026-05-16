@@ -101,10 +101,10 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#05070a] text-slate-900 dark:text-white pb-32 transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] pb-32 transition-colors duration-500">
       {/* Cinematic Hero */}
-      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden mb-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 dark:via-[#05070a]/50 to-white dark:to-[#05070a] z-10" />
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden mb-20 bg-slate-50 dark:bg-[#0f0f0f]">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 dark:via-[#0f0f0f]/50 to-white dark:to-[#0f0f0f] z-10" />
         <motion.div 
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.2 }}
@@ -113,14 +113,14 @@ const Contact = () => {
         />
         
         {/* Animated Glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6db70e]/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-[120px] animate-pulse delay-1000" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7ecf55]/10 dark:bg-[#7ecf55]/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-[120px] animate-pulse delay-1000 dark:hidden" />
 
         <div className="relative z-20 text-center px-6">
           <motion.h4 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-[#6db70e] text-xs font-black uppercase tracking-[0.8em] mb-6"
+            className="text-[#6db70e] dark:text-[#7ecf55] text-xs font-black uppercase tracking-[0.8em] mb-6"
           >
             Bazaar Concierge
           </motion.h4>
@@ -128,15 +128,15 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter mb-8"
+            className="text-6xl md:text-8xl font-black tracking-tighter mb-8 text-slate-900 dark:text-[#e0e0e0]"
           >
-            GET IN <span className="text-[#6db70e]">TOUCH</span>
+            GET IN <span className="text-[#6db70e] dark:text-[#7ecf55]">TOUCH</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-serif italic max-w-2xl mx-auto leading-relaxed"
+            className="text-slate-500 dark:text-[#888888] text-lg md:text-xl font-serif italic max-w-2xl mx-auto leading-relaxed"
           >
             "Connecting you with the elite culinary masters of the Bazaar. Our concierge team is standing by to curate your experience."
           </motion.p>
@@ -154,17 +154,17 @@ const Contact = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group p-8 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[2.5rem] hover:border-[#6db70e]/40 transition-all duration-500"
+                className="group p-8 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-[2.5rem] hover:border-[#7ecf55]/40 transition-all duration-500"
               >
                 <div className="flex justify-between items-start mb-8">
-                  <div className="w-14 h-14 rounded-2xl bg-[#6db70e]/10 flex items-center justify-center text-[#6db70e] group-hover:bg-[#6db70e] group-hover:text-black transition-all">
+                  <div className="w-14 h-14 rounded-2xl bg-[#7ecf55]/10 flex items-center justify-center text-[#6db70e] dark:text-[#7ecf55] group-hover:bg-[#7ecf55] group-hover:text-[#0f0f0f] transition-all">
                     {info.icon}
                   </div>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 border border-slate-200 dark:border-white/10 px-3 py-1 rounded-full">{info.tag}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-[#888888] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] px-3 py-1 rounded-full">{info.tag}</span>
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white mb-4">{info.title}</h3>
+                <h3 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-[#e0e0e0] mb-4">{info.title}</h3>
                 {info.details.map((detail, i) => (
-                  <p key={i} className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-1 truncate">{detail}</p>
+                  <p key={i} className="text-slate-500 dark:text-[#888888] text-sm font-medium mb-1 truncate">{detail}</p>
                 ))}
               </motion.div>
             ))}
@@ -175,12 +175,12 @@ const Contact = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-8 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[3.5rem] p-10 md:p-16 backdrop-blur-xl"
+            className="lg:col-span-8 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-[3.5rem] p-10 md:p-16 backdrop-blur-xl"
           >
             <div className="mb-12">
-              <span className="text-[#6db70e] text-[10px] font-black uppercase tracking-[0.5em] mb-4 block">Secure Transmission</span>
-              <h2 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-4">SEND A <span className="text-[#6db70e]">MESSAGE</span></h2>
-              <p className="text-slate-500 dark:text-slate-400 font-serif italic">Your inquiry will be handled by our senior concierge staff.</p>
+              <span className="text-[#6db70e] dark:text-[#7ecf55] text-[10px] font-black uppercase tracking-[0.5em] mb-4 block">Secure Transmission</span>
+              <h2 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-[#e0e0e0] mb-4">SEND A <span className="text-[#6db70e] dark:text-[#7ecf55]">MESSAGE</span></h2>
+              <p className="text-slate-500 dark:text-[#888888] font-serif italic">Your inquiry will be handled by our senior concierge staff.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -193,7 +193,7 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-8 py-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
+                    className="w-full px-8 py-5 bg-white dark:bg-[#111111] border border-slate-200 dark:border-[#242424] rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
                     placeholder="Enter your name"
                   />
                 </div>
@@ -205,7 +205,7 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-8 py-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
+                    className="w-full px-8 py-5 bg-white dark:bg-[#111111] border border-slate-200 dark:border-[#242424] rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -219,7 +219,7 @@ const Contact = () => {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-8 py-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
+                  className="w-full px-8 py-5 bg-white dark:bg-[#111111] border border-slate-200 dark:border-[#242424] rounded-full text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all"
                   placeholder="How can we assist you?"
                 />
               </div>
@@ -232,7 +232,7 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows="6"
-                  className="w-full px-8 py-6 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[2.5rem] text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all resize-none"
+                  className="w-full px-8 py-6 bg-white dark:bg-[#111111] border border-slate-200 dark:border-[#242424] rounded-[2.5rem] text-slate-900 dark:text-white focus:border-[#6db70e] outline-none transition-all resize-none"
                   placeholder="Details of your request..."
                 />
               </div>
@@ -244,8 +244,8 @@ const Contact = () => {
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                 className={`w-full py-6 font-black uppercase tracking-[0.4em] text-xs rounded-full transition-all flex items-center justify-center gap-3 ${
                   isSubmitting 
-                    ? 'bg-slate-200 dark:bg-white/10 text-slate-400' 
-                    : 'bg-[#6db70e] text-black shadow-[0_20px_40px_rgba(109,183,14,0.3)] hover:bg-slate-900 hover:text-white'
+                    ? 'bg-slate-200 dark:bg-[#161616] text-slate-400' 
+                    : 'bg-[#6db70e] dark:bg-[#7ecf55] text-black dark:text-[#0f0f0f] shadow-[0_20px_40px_rgba(109,183,14,0.3)] hover:bg-slate-900 hover:text-white'
                 }`}
               >
                 {isSubmitting ? (
@@ -267,7 +267,7 @@ const Contact = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="w-full h-[500px] rounded-[3.5rem] overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl relative"
+            className="w-full h-[500px] rounded-[3.5rem] overflow-hidden border border-slate-200 dark:border-[#242424] shadow-2xl relative"
           >
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d116946.33519808388!2d90.44357738221877!3d23.619643534571997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b1103ba03409%3A0xaf09995392e22f20!2sNarayanganj!5e0!3m2!1sen!2sbd!4v1715714342132!5m2!1sen!2sbd" 
@@ -278,9 +278,9 @@ const Contact = () => {
               loading="lazy" 
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
-            <div className="absolute top-8 left-8 bg-white dark:bg-[#05070a] p-6 rounded-[2rem] border border-slate-200 dark:border-white/10 backdrop-blur-md shadow-xl hidden md:block">
-              <h4 className="text-xs font-black uppercase tracking-widest text-[#6db70e] mb-2">Bazaar Location</h4>
-              <p className="text-lg font-black tracking-tight">Narayanganj, Bangladesh</p>
+            <div className="absolute top-8 left-8 bg-white dark:bg-[#0f0f0f] p-6 rounded-[2rem] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] backdrop-blur-md shadow-xl hidden md:block">
+              <h4 className="text-xs font-black uppercase tracking-widest text-[#6db70e] dark:text-[#7ecf55] mb-2">Bazaar Location</h4>
+              <p className="text-lg font-black tracking-tight text-slate-900 dark:text-[#e0e0e0]">Narayanganj, Bangladesh</p>
             </div>
           </motion.div>
         </section>
@@ -290,13 +290,13 @@ const Contact = () => {
           <motion.h2 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white mb-8"
+            className="text-3xl font-black tracking-tighter text-slate-900 dark:text-[#e0e0e0] mb-8"
           >
-            IMMEDIATE <span className="text-[#6db70e]">ASSISTANCE?</span>
+            IMMEDIATE <span className="text-[#6db70e] dark:text-[#7ecf55]">ASSISTANCE?</span>
           </motion.h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-12">Browse our curated repository of common inquiries for instant resolution.</p>
+          <p className="text-slate-500 dark:text-[#888888] text-sm mb-12">Browse our curated repository of common inquiries for instant resolution.</p>
           <Link to="/faq">
-            <button className="px-12 py-5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-black rounded-full text-xs uppercase tracking-[0.3em] hover:bg-[#6db70e] hover:text-black hover:border-[#6db70e] transition-all">
+            <button className="px-12 py-5 border border-slate-200 dark:border-[#242424] text-slate-900 dark:text-[#e0e0e0] font-black rounded-full text-xs uppercase tracking-[0.3em] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] hover:text-black dark:hover:text-[#0f0f0f] hover:border-[#6db70e] dark:hover:border-[#7ecf55] transition-all">
               Consult FAQ Archive
             </button>
           </Link>

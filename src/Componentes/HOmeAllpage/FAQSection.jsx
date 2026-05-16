@@ -37,9 +37,9 @@ const FAQSection = () => {
   };
 
   return (
-    <section className="py-32 px-4 bg-white relative overflow-hidden">
-      {/* Dynamic Brand Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#6db70e]/5 rounded-full blur-[120px] pointer-events-none" />
+    <section className="py-32 px-4 bg-white dark:bg-[#0f0f0f] relative overflow-hidden transition-colors duration-500">
+      {/* Dynamic Brand Background - Hidden in dark mode for flat design */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#6db70e]/5 dark:hidden rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto relative z-10">
         {/* Header - Boutique Style */}
@@ -50,14 +50,14 @@ const FAQSection = () => {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <span className="text-[#6db70e] text-3xl md:text-4xl font-bold mb-4 font-serif italic block">
+          <span className="text-[#6db70e] dark:text-[#7ecf55] text-3xl md:text-4xl font-bold mb-4 font-serif italic block">
             Got questions?
           </span>
-          <h2 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none mb-6">
-            Frequently Asked <span className="text-[#6db70e]">Questions</span>
+          <h2 className="text-4xl md:text-7xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter leading-none mb-6">
+            Frequently Asked <span className="text-[#6db70e] dark:text-[#7ecf55]">Questions</span>
           </h2>
-          <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
-            Everything you need to know about joining the world's most exclusive local culinary community.
+          <p className="text-xl text-slate-500 dark:text-[#888888] font-medium max-w-2xl mx-auto leading-relaxed">
+Everything you need to know about joining the world's most exclusive local culinary community.
           </p>
         </motion.div>
 
@@ -71,8 +71,8 @@ const FAQSection = () => {
                 className={`
                   rounded-[2.5rem] border transition-all duration-500
                   ${isOpen 
-                    ? 'bg-slate-900 border-slate-900 shadow-[0_20px_50px_rgba(15,23,42,0.3)]' 
-                    : 'bg-white border-slate-100 hover:border-[#6db70e]/30 shadow-sm'}
+                    ? 'bg-slate-900 dark:bg-[#111111] border-slate-900 dark:border-[#242424] dark:border-[0.5px] shadow-2xl' 
+                    : 'bg-white dark:bg-[#151515]/40 border-slate-100 dark:border-[#242424] dark:border-[0.5px] hover:border-[#6db70e]/30 shadow-sm'}
                 `}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -86,13 +86,13 @@ const FAQSection = () => {
                   <div className="flex items-center gap-6">
                     <span className={`
                       text-lg font-black transition-colors duration-300
-                      ${isOpen ? 'text-[#6db70e]' : 'text-slate-300 group-hover:text-[#6db70e]'}
+                      ${isOpen ? 'text-[#6db70e] dark:text-[#7ecf55]' : 'text-slate-300 dark:text-[#555] group-hover:text-[#6db70e]'}
                     `}>
                       0{index + 1}
                     </span>
                     <h3 className={`
                       text-xl md:text-2xl font-black tracking-tight transition-colors duration-300
-                      ${isOpen ? 'text-white' : 'text-slate-800'}
+                      ${isOpen ? 'text-white dark:text-[#e0e0e0]' : 'text-slate-800 dark:text-[#8a8a8a]'}
                     `}>
                       {faq.question}
                     </h3>
@@ -100,7 +100,7 @@ const FAQSection = () => {
                   
                   <div className={`
                     w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500
-                    ${isOpen ? 'bg-[#6db70e] text-white rotate-180' : 'bg-slate-50 text-slate-400'}
+                    ${isOpen ? 'bg-[#6db70e] dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] rotate-180' : 'bg-slate-50 dark:bg-[#111111] text-slate-400 dark:text-[#555]'}
                   `}>
                     {isOpen ? <FiMinus size={20} /> : <FiPlus size={20} />}
                   </div>
@@ -116,13 +116,13 @@ const FAQSection = () => {
                       className="overflow-hidden"
                     >
                       <div className="px-8 md:px-12 pb-10 ml-14">
-                        <p className="text-slate-400 text-lg leading-relaxed font-medium">
+                        <p className="text-slate-400 dark:text-[#888888] text-lg leading-relaxed font-medium">
                           {faq.answer}
                         </p>
                         <motion.button 
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          className="mt-6 flex items-center gap-2 text-[#6db70e] text-xs font-black uppercase tracking-widest hover:gap-4 transition-all"
+                          className="mt-6 flex items-center gap-2 text-[#6db70e] dark:text-[#7ecf55] text-xs font-black uppercase tracking-widest hover:gap-4 transition-all"
                         >
                           Learn more about this <FiArrowRight />
                         </motion.button>
@@ -137,12 +137,12 @@ const FAQSection = () => {
 
         {/* Support CTA */}
         <motion.div 
-          className="mt-20 text-center p-12 bg-slate-50 rounded-[3rem] border border-dashed border-slate-200"
+          className="mt-20 text-center p-12 bg-slate-50 dark:bg-[#111111] rounded-[3rem] border border-dashed border-slate-200 dark:border-[#242424] dark:border-[0.5px]"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
         >
-          <p className="text-slate-500 font-medium mb-6">Still have a question that isn't listed here?</p>
-          <button className="px-10 py-4 bg-slate-900 text-white font-black rounded-full uppercase text-xs tracking-widest hover:bg-[#6db70e] transition-all flex items-center gap-3 mx-auto shadow-xl">
+          <p className="text-slate-500 dark:text-[#8a8a8a] font-medium mb-6">Still have a question that isn't listed here?</p>
+          <button className="px-10 py-4 bg-slate-900 dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] font-black rounded-full uppercase text-xs tracking-widest hover:bg-[#6db70e] dark:hover:bg-[#5ab86e] transition-all flex items-center gap-3 mx-auto shadow-xl">
             <FiHelpCircle size={18} /> Contact Boutique Support
           </button>
         </motion.div>

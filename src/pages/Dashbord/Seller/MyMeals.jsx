@@ -1,69 +1,87 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../../Context/AuthContext';
+import axios from 'axios';
 import Swal from 'sweetalert2';
 import Loading from '../../../Componentes/Loading';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FiEdit3, 
+  FiTrash2, 
+  FiDollarSign, 
+  FiClock, 
+  FiTag, 
+  FiZap,
+  FiX,
+  FiCheckCircle,
+  FiPlusCircle,
+  FiStar,
+  FiChevronRight,
+  FiPackage
+} from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 const MyMeals = () => {
   const { user } = useContext(AuthContext);
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMeal, setSelectedMeal] = useState(null);
-
-  const normalizeId = (m) => {
-    const id = m._id;
-    if (!id) return m;
-    if (typeof id === 'string') return m;
-    if (id.$oid) return { ...m, _id: id.$oid };
-    if (id.toString) return { ...m, _id: id.toString() };
-    return m;
-  };
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     if (!user?.email) return;
 
-    fetch(`${import.meta.env.VITE_BACKEND_API}/user-meals/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          const normalized = data.data.map((m) => normalizeId(m));
-          setMeals(normalized);
+    const fetchChefMeals = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/chef-meals/${user.email}`);
+        if (res.data.success) {
+          setMeals(res.data.data || []);
         }
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        console.error('Fetch error:', err);
+        toast.error('Failed to sync culinary inventory');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChefMeals();
   }, [user?.email]);
 
   const handleDelete = (id) => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'This meal will be deleted permanently!',
+      title: '<span class="text-slate-900 font-black uppercase tracking-tight">De-register Asset?</span>',
+      html: '<p class="text-slate-500 font-medium text-sm">This culinary creation will be permanently removed from the bazaar network.</p>',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-    }).then((result) => {
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#0f172a',
+      confirmButtonText: 'Yes, Terminate',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      customClass: {
+        popup: 'rounded-[2rem] border border-slate-100 shadow-2xl',
+        confirmButton: 'px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs ml-2',
+        cancelButton: 'px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-xs'
+      }
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        fetch(`${import.meta.env.VITE_BACKEND_API}/meals/${id}`, {
-          method: 'DELETE',
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              Swal.fire('Deleted!', 'Meal has been deleted.', 'success');
-              setMeals((prev) => prev.filter((meal) => meal._id !== id));
-            }
-          });
+        try {
+          const res = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/meals/${id}`);
+          if (res.data.success) {
+            setMeals((prev) => prev.filter((meal) => meal._id !== id));
+            toast.success('Asset de-registered successfully');
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error('Protocol termination failed');
+        }
       }
     });
   };
 
-  const handleOpenModal = (meal) => {
-    const normalized = normalizeId(meal);
-    console.log('Opening modal for meal:', normalized);
-    setSelectedMeal(normalized);
-  };
-
+  const handleOpenModal = (meal) => setSelectedMeal({ ...meal });
   const handleCloseModal = () => setSelectedMeal(null);
 
   const handleChange = (e) => {
@@ -71,228 +89,256 @@ const MyMeals = () => {
     setSelectedMeal((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleIngredientsChange = (e) => {
-    const value = e.target.value.split(',').map((i) => i.trim());
-    setSelectedMeal((prev) => ({ ...prev, ingredients: value }));
-  };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!selectedMeal || !selectedMeal._id) {
-      Swal.fire('Error', 'No meal selected or missing id', 'error');
-      return;
-    }
+    if (!selectedMeal || !selectedMeal._id) return;
 
+    setUpdating(true);
     const payload = { ...selectedMeal };
+    const id = selectedMeal._id;
     delete payload._id;
-    if (payload.price !== undefined) payload.price = Number(payload.price);
-    if (payload.rating !== undefined) payload.rating = Number(payload.rating);
-    if (payload.estimatedDeliveryTime !== undefined)
-      payload.estimatedDeliveryTime = Number(payload.estimatedDeliveryTime);
-
-    const optimisticMeal = { ...selectedMeal, ...payload };
-    setMeals((prev) =>
-      prev.map((m) => (m._id === optimisticMeal._id ? optimisticMeal : m))
-    );
-    setSelectedMeal(null);
-    Swal.fire('Updated!', 'Meal has been updated.', 'success');
+    
+    // Type conversion
+    if (payload.price) payload.price = parseFloat(payload.price);
+    if (payload.estimatedDeliveryTime) payload.estimatedDeliveryTime = parseInt(payload.estimatedDeliveryTime);
 
     try {
-      const id = encodeURIComponent(String(selectedMeal._id).trim());
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/meals/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      console.log('Background PUT response:', res.status, data);
+      const res = await axios.put(`${import.meta.env.VITE_BACKEND_API}/meals/${id}`, payload);
+      if (res.data.success) {
+        setMeals(prev => prev.map(m => m._id === id ? { ...m, ...payload } : m));
+        handleCloseModal();
+        toast.success('Culinary identity re-synchronized!');
+      }
     } catch (err) {
-      console.error('Background update failed:', err);
-
-      Swal.fire(
-        'Warning',
-        'Server update failed — changes may not be saved.',
-        'warning'
-      );
+      console.error(err);
+      toast.error('Identity synchronization failed');
+    } finally {
+      setUpdating(false);
     }
   };
+
   if (loading) return <Loading />;
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <title>LocalChefBazaar || My Meals</title>
+    <div className="min-h-screen bg-white dark:bg-[#121212] text-slate-900 dark:text-white pb-32 transition-colors duration-500 font-sans">
+      <title>LocalChefBazaar || My Culinary Assets</title>
+      <Toaster position="top-center" />
       
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold   mb-2">
-          My Meals ({meals.length})
-        </h1>
-        <p className="">
-          Manage and update your added meals
-        </p>
-      </div>
+      {/* Cinematic Header */}
+      <div className="relative pt-20 pb-16 px-6 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#6db70e]/5 rounded-full blur-[120px] -mr-32 -mt-32" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -ml-48 -mb-48" />
 
-      <div className="max-w-6xl mx-auto">
-
-      {meals.length === 0 ? (
-        <div className="rounded-xl shadow-lg border border-gray-200 p-8 text-center">
-          <div className=" mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold mb-2">No Meals Added Yet</h3>
-          <p className="text-gray-600">Start adding meals to showcase your culinary skills!</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {meals.map((meal) => (
-            <div
-              key={meal._id}
-              className="border p-4 rounded-xl shadow text-black flex flex-col justify-between h-full"
-            >
-              <div>
-                <img
-                  src={meal.foodImage}
-                  alt={meal.foodName}
-                  className="rounded-md h-44 w-full object-cover"
-                />
-                <h3 className="mt-3 text-xl font-bold">{meal.foodName}</h3>
-                <p className="text-sm mt-1">
-                  Price: <span className="font-semibold">${meal.price}</span>
-                </p>
-                <p className="text-sm mt-1">
-                  Rating: <span className="font-semibold">{meal.rating}</span>
-                </p>
-                <p className="text-sm mt-2">
-                  Ingredients:
-                  <span className="font-semibold">
-                    {' '}
-                    {Array.isArray(meal.ingredients)
-                      ? meal.ingredients.join(', ')
-                      : meal.ingredients}
-                  </span>
-                </p>
-                <p className="text-sm mt-1">
-                  Delivery Time:
-                  <span className="font-semibold">
-                    {' '}
-                    {meal.estimatedDeliveryTime} min
-                  </span>
-                </p>
-                <p className="text-sm mt-1">
-                  Chef Name:
-                  <span className="font-semibold"> {meal.chefName}</span>
-                </p>
-                <p className="text-sm mt-1">
-                  Chef ID:
-                  <span className="font-semibold"> {meal.chefId}</span>
-                </p>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-3 bg-[#6db70e]/10 px-5 py-2 rounded-full border border-[#6db70e]/20">
+                <FiZap className="text-[#6db70e] animate-pulse" size={14} />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6db70e]">Artisan Inventory Active</span>
               </div>
-
-              <div className="flex justify-center gap-4 mt-4">
-                <button
-                  onClick={() => handleOpenModal(meal)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Update
-                </button>
-
-                <button
-                  onClick={() => handleDelete(meal._id)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer"
-                >
-                  Delete
-                </button>
-              </div>
+              <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none text-slate-900 dark:text-white">
+                My <span className="text-[#6db70e]">Meals</span>
+              </h1>
+              <p className="text-slate-400 font-serif italic text-sm md:text-base max-w-xl">
+                Managing your registered culinary products within the LocalChefBazaar network. Current capacity: <span className="text-[#6db70e] font-black">{meals.length} Registered Units</span>.
+              </p>
             </div>
-          ))}
-        </div>
-      )}
-
-      {selectedMeal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-96 relative">
-            <h3 className="text-xl font-bold mb-4">Update Meal</h3>
-            <form onSubmit={handleUpdate} className="space-y-3">
-              <input
-                type="text"
-                name="foodName"
-                value={selectedMeal.foodName || ''}
-                onChange={handleChange}
-                placeholder="Food Name"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="text"
-                name="foodImage"
-                value={selectedMeal.foodImage || ''}
-                onChange={handleChange}
-                placeholder="Food Image URL"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="number"
-                name="price"
-                value={selectedMeal.price || ''}
-                onChange={handleChange}
-                placeholder="Price"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="number"
-                name="rating"
-                value={selectedMeal.rating || ''}
-                onChange={handleChange}
-                placeholder="Rating"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="text"
-                name="ingredients"
-                value={
-                  Array.isArray(selectedMeal.ingredients)
-                    ? selectedMeal.ingredients.join(', ')
-                    : selectedMeal.ingredients || ''
-                }
-                onChange={handleIngredientsChange}
-                placeholder="Ingredients (comma separated)"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <input
-                type="number"
-                name="estimatedDeliveryTime"
-                value={selectedMeal.estimatedDeliveryTime || ''}
-                onChange={handleChange}
-                placeholder="Estimated Delivery Time"
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-              <div className="flex justify-end gap-2 mt-2">
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+            
+            <Link 
+              to="/dashboard/addmeals"
+              className="group flex items-center gap-3 bg-slate-900 dark:bg-[#6db70e] text-white px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all shadow-[#6db70e]/20"
+            >
+              <FiPlusCircle size={18} className="group-hover:rotate-90 transition-transform duration-500" /> 
+              <span>Register New Asset</span>
+            </Link>
           </div>
         </div>
-      )}
       </div>
+
+      <div className="max-w-7xl mx-auto px-6">
+        {meals.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10 rounded-[3.5rem] p-24 text-center"
+          >
+            <div className="w-24 h-24 bg-white dark:bg-white/10 rounded-3xl shadow-xl flex items-center justify-center mx-auto mb-8 text-slate-300">
+               <FiPackage size={40} />
+            </div>
+            <h3 className="text-2xl font-black uppercase tracking-tighter text-slate-900 dark:text-white mb-4">Inventory Offline</h3>
+            <p className="text-slate-400 font-serif italic mb-10">No culinary assets have been detected in your artisan terminal.</p>
+            <Link to="/dashboard/addmeals" className="inline-flex items-center gap-3 text-[#6db70e] font-black uppercase tracking-widest text-[10px] group">
+               Initialize First Product <FiChevronRight className="group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {meals.map((meal, idx) => (
+              <motion.div
+                key={meal._id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="group bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-[3rem] overflow-hidden hover:shadow-2xl hover:border-[#6db70e]/30 transition-all duration-500 relative"
+              >
+                <div className="relative h-72 overflow-hidden">
+                   <img
+                     src={meal.foodImage}
+                     alt={meal.foodName}
+                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale-[20%] group-hover:grayscale-0"
+                   />
+                   <div className="absolute top-6 right-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl flex items-center gap-2 shadow-2xl border border-white/20 dark:border-white/5">
+                      <FiDollarSign className="text-[#6db70e]" size={14} />
+                      <span className="font-black text-slate-900 dark:text-white text-lg tracking-tight">{meal.price}</span>
+                   </div>
+                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+
+                <div className="p-10">
+                   <div className="flex justify-between items-start mb-6">
+                      <div className="min-w-0">
+                         <h3 className="text-2xl font-black uppercase tracking-tighter text-slate-900 dark:text-white leading-none truncate mb-2">{meal.foodName}</h3>
+                         <div className="flex items-center gap-2">
+                           <span className="text-[9px] font-black text-[#6db70e] uppercase tracking-[0.3em]">Serial</span>
+                           <span className="text-[10px] font-bold text-slate-400 tracking-wider truncate">{meal.chefId}</span>
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-amber-500 font-black text-xs bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20">
+                         <FiStar size={14} /> <span>{meal.rating}</span>
+                      </div>
+                   </div>
+
+                   <div className="space-y-4 mb-10">
+                      <div className="flex items-center gap-4 text-xs font-bold text-slate-500 dark:text-[#888888]">
+                         <div className="w-8 h-8 rounded-xl bg-[#6db70e]/10 flex items-center justify-center text-[#6db70e]">
+                            <FiClock size={14} /> 
+                         </div>
+                         <span>{meal.estimatedDeliveryTime} Minute Delivery Protocol</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs font-bold text-slate-500 dark:text-[#888888]">
+                         <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                            <FiTag size={14} />
+                         </div>
+                         <span className="truncate italic">
+                           {Array.isArray(meal.ingredients) ? meal.ingredients.join(' • ') : meal.ingredients}
+                         </span>
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-2 gap-4">
+                      <button
+                        onClick={() => handleOpenModal(meal)}
+                        className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-[#6db70e] text-white py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:shadow-xl hover:shadow-[#6db70e]/20 transition-all active:scale-95"
+                      >
+                        <FiEdit3 size={14} /> Update
+                      </button>
+                      <button
+                        onClick={() => handleDelete(meal._id)}
+                        className="flex items-center justify-center gap-2 bg-red-500/10 text-red-500 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                      >
+                        <FiTrash2 size={14} /> Remove
+                      </button>
+                   </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal (Artisan Configuration) */}
+      <AnimatePresence>
+        {selectedMeal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseModal}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 30 }}
+              className="relative bg-white dark:bg-[#151515] w-full max-w-xl rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-white/10"
+            >
+               <div className="p-10 md:p-14">
+                  <div className="flex items-center justify-between mb-12">
+                     <div className="space-y-1">
+                        <h3 className="text-3xl font-black uppercase tracking-tighter text-slate-900 dark:text-white">Update <span className="text-[#6db70e]">Asset</span></h3>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#6db70e]">Culinary Re-Synchronization</p>
+                     </div>
+                     <button onClick={handleCloseModal} className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all active:rotate-90">
+                        <FiX size={24} />
+                     </button>
+                  </div>
+
+                  <form onSubmit={handleUpdate} className="space-y-6">
+                     <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Meal Identity</label>
+                           <input 
+                             type="text" 
+                             name="foodName" 
+                             value={selectedMeal.foodName || ''} 
+                             onChange={handleChange} 
+                             className="w-full bg-slate-50 dark:bg-[#111111] border-none rounded-2xl px-6 py-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-[#242424] focus:ring-[#6db70e] transition-all" 
+                             required 
+                           />
+                        </div>
+                        <div className="space-y-3">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Market Price ($)</label>
+                           <input 
+                             type="number" 
+                             step="0.01"
+                             name="price" 
+                             value={selectedMeal.price || ''} 
+                             onChange={handleChange} 
+                             className="w-full bg-slate-50 dark:bg-[#111111] border-none rounded-2xl px-6 py-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-[#242424] focus:ring-[#6db70e] transition-all" 
+                             required 
+                           />
+                        </div>
+                     </div>
+
+                     <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Visual Source URL</label>
+                        <input 
+                          type="text" 
+                          name="foodImage" 
+                          value={selectedMeal.foodImage || ''} 
+                          onChange={handleChange} 
+                          className="w-full bg-slate-50 dark:bg-[#111111] border-none rounded-2xl px-6 py-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-[#242424] focus:ring-[#6db70e] transition-all" 
+                          required 
+                        />
+                     </div>
+
+                     <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Fulfillment Protocol (min)</label>
+                        <input 
+                          type="number" 
+                          name="estimatedDeliveryTime" 
+                          value={selectedMeal.estimatedDeliveryTime || ''} 
+                          onChange={handleChange} 
+                          className="w-full bg-slate-50 dark:bg-[#111111] border-none rounded-2xl px-6 py-4 text-sm font-bold outline-none ring-1 ring-slate-100 dark:ring-[#242424] focus:ring-[#6db70e] transition-all" 
+                          required 
+                        />
+                     </div>
+
+                     <button 
+                       type="submit" 
+                       disabled={updating}
+                       className="w-full py-6 bg-slate-900 dark:bg-[#6db70e] text-white rounded-[1.5rem] font-black text-xs uppercase tracking-[0.4em] shadow-2xl shadow-[#6db70e]/30 mt-8 flex items-center justify-center gap-3 group disabled:opacity-50"
+                     >
+                        {updating ? 'Synchronizing...' : <><FiCheckCircle className="group-hover:scale-110 transition-transform" /> Commit Changes</>}
+                     </button>
+                  </form>
+               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

@@ -30,9 +30,9 @@ const StatsCounter = () => {
   }, []);
 
   const statItems = [
-    { label: 'Total Meals', value: stats.totalMeals, icon: <FaUtensils />, color: 'text-orange-500' },
-    { label: 'Total Reviews', value: stats.totalReviews, icon: <FaStar />, color: 'text-yellow-500' },
-    { label: 'Total Favorites', value: stats.totalFavorites, icon: <FaHeart />, color: 'text-red-500' }
+    { label: 'Total Meals', value: stats.totalMeals, icon: <FaUtensils />, color: 'text-[#6db70e]' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: <FaStar />, color: 'text-[#6db70e]' },
+    { label: 'Total Favorites', value: stats.totalFavorites, icon: <FaHeart />, color: 'text-[#6db70e]' }
   ];
 
   return (
@@ -44,15 +44,15 @@ const StatsCounter = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: index * 0.1 }}
           viewport={{ once: true }}
-          className="bg-white p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-slate-100 flex flex-col items-center justify-center group hover:shadow-[0_20px_50px_rgba(109,183,14,0.1)] transition-all duration-500"
+          className="bg-white dark:bg-[#111111] p-8 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] flex flex-col items-center justify-center group hover:shadow-[0_20px_50px_rgba(109,183,14,0.1)] transition-all duration-500"
         >
           <div className={`${item.color} text-4xl mb-4 group-hover:scale-110 transition-transform duration-500`}>
             {item.icon}
           </div>
-          <div className="text-4xl font-black text-slate-900 tracking-tighter mb-1">
+          <div className="text-4xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter mb-1">
             {item.value}
           </div>
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+          <div className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-[0.3em]">
             {item.label}
           </div>
         </motion.div>

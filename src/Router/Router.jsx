@@ -36,6 +36,7 @@ import Analytics from '../pages/Dashbord/Seller/Analytics';
 import Settings from '../pages/Dashbord/Admin/Settings';
 import Reports from '../pages/Dashbord/Manager/Reports';
 import Statistics from '../pages/Dashbord/Admin/Statistics';
+import PrivateRoute from './PriveteRouter';
 
 export const router = createBrowserRouter([
   {
@@ -92,63 +93,30 @@ export const router = createBrowserRouter([
         element: <Faq />,
       },
       {
-        path: '/order/:id',
+        path: 'order/:id',
         element: <Order />,
         loader: ({ params }) =>
-          fetch(`${import.meta.env.VITE_BACKEND_API}
-/meals/${params.id}`),
+          fetch(`${import.meta.env.VITE_BACKEND_API}/meals/${params.id}`),
       },
     ],
   },
 
   {
-    path: 'dashbord',
+    path: '/dashboard',
     element: <DashboardLayout />,
     errorElement: <Error />,
     children: [
       {
         index: true,
+        element: <Profile />,
+      },
+      {
+        path: 'overview',
         element: <DashboardOverview />,
-      },
-      {
-        path: 'orders',
-        element: <Orders />,
-      },
-      {
-        path: 'reviews',
-        element: <MYReviews />,
-      },
-      {
-        path: 'favoritemeal',
-        element: <FavoriteMeal />,
       },
       {
         path: 'profile',
         element: <Profile />,
-      },
-      {
-        path: 'addmeals',
-        element: <Addmeals />,
-      },
-      {
-        path: 'mymeals',
-        element: <MyMeals />,
-      },
-      {
-        path: 'orderreq',
-        element: <OrderRequest />,
-      },
-      {
-        path: 'myorder',
-        element: <MyOrders />,
-      },
-      {
-        path: 'manageuser',
-        element: <ManageUsers />,
-      },
-      {
-        path: 'managerequest',
-        element: <ManageRequests />,
       },
       {
         path: 'payment-success',
@@ -158,22 +126,67 @@ export const router = createBrowserRouter([
         path: 'payment-cancel',
         element: <PaymentCancel />,
       },
+
+      // User Specific Routes
       {
-        path: 'StatisticsPage',
-        element: <Statistics />,
+        path: 'orders',
+        element: <PrivateRoute allowedRoles={['user', 'chef', 'admin', 'manager']}><Orders /></PrivateRoute>,
+      },
+      {
+        path: 'reviews',
+        element: <PrivateRoute allowedRoles={['user', 'chef', 'admin', 'manager']}><MYReviews /></PrivateRoute>,
+      },
+      {
+        path: 'favoritemeal',
+        element: <PrivateRoute allowedRoles={['user', 'chef', 'admin', 'manager']}><FavoriteMeal /></PrivateRoute>,
+      },
+      {
+        path: 'myorder',
+        element: <PrivateRoute allowedRoles={['user', 'chef', 'admin', 'manager']}><MyOrders /></PrivateRoute>,
+      },
+
+      // Chef Specific Routes
+      {
+        path: 'addmeals',
+        element: <PrivateRoute allowedRoles={['chef', 'admin']}><Addmeals /></PrivateRoute>,
+      },
+      {
+        path: 'mymeals',
+        element: <PrivateRoute allowedRoles={['chef', 'admin']}><MyMeals /></PrivateRoute>,
+      },
+      {
+        path: 'orderreq',
+        element: <PrivateRoute allowedRoles={['chef', 'admin']}><OrderRequest /></PrivateRoute>,
       },
       {
         path: 'analytics',
-        element: <Analytics />,
+        element: <PrivateRoute allowedRoles={['chef', 'admin']}><Analytics /></PrivateRoute>,
+      },
+
+      // Admin Specific Routes
+      {
+        path: 'manageuser',
+        element: <PrivateRoute allowedRoles={['admin']}><ManageUsers /></PrivateRoute>,
+      },
+      {
+        path: 'managerequest',
+        element: <PrivateRoute allowedRoles={['admin']}><ManageRequests /></PrivateRoute>,
+      },
+      {
+        path: 'StatisticsPage',
+        element: <PrivateRoute allowedRoles={['admin']}><Statistics /></PrivateRoute>,
       },
       {
         path: 'settings',
-        element: <Settings />,
+        element: <PrivateRoute allowedRoles={['admin']}><Settings /></PrivateRoute>,
       },
+
+      // Manager Specific Routes
       {
         path: 'reports',
-        element: <Reports />,
+        element: <PrivateRoute allowedRoles={['manager', 'admin']}><Reports /></PrivateRoute>,
       },
     ],
   },
 ]);
+

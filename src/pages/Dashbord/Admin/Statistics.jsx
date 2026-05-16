@@ -6,16 +6,8 @@ import DeliveredOrdersCard from './Statistics/DeliveredOrdersCard';
 
 const Statistics = () => {
   return (
-    <div className="p-6">
-   
+    <div className="min-h-screen bg-white dark:bg-[#05070a]">
       <StatisticsPage />
-
-    
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        <TotalUsersCard />
-        <PendingPaymentsCard />
-        <DeliveredOrdersCard />
-      </div>
     </div>
   );
 };

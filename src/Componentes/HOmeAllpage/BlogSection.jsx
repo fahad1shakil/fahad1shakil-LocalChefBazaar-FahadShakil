@@ -50,10 +50,10 @@ const BlogSection = () => {
   ];
 
   return (
-    <section className="py-24 px-4 bg-white relative overflow-hidden">
-      {/* Background Glows */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#6db70e]/5 rounded-full blur-[100px] -mr-48 -mt-48" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500/5 rounded-full blur-[100px] -ml-48 -mb-48" />
+    <section className="py-24 px-4 bg-white dark:bg-[#0f0f0f] relative overflow-hidden transition-colors duration-500">
+      {/* Background Glows - Hidden in dark mode */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#6db70e]/5 dark:hidden rounded-full blur-[100px] -mr-48 -mt-48" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500/5 dark:hidden rounded-full blur-[100px] -ml-48 -mb-48" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <motion.div
@@ -64,18 +64,18 @@ const BlogSection = () => {
           viewport={{ once: true }}
         >
           <div className="flex flex-col items-center">
-            <h3 className="text-[#6db70e] text-4xl md:text-5xl font-bold mb-2 font-serif italic">
+            <h3 className="text-[#6db70e] dark:text-[#7ecf55] text-4xl md:text-5xl font-bold mb-2 font-serif italic">
               Insightful
             </h3>
-            <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-none">
-              From Our <span className="text-[#6db70e]">Kitchen Blog</span>
+            <h2 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter leading-none">
+              From Our <span className="text-[#6db70e] dark:text-[#7ecf55]">Kitchen Blog</span>
             </h2>
-            <span className="text-[10px] font-black tracking-[0.6em] text-[#6db70e] uppercase mt-4 block">
+            <span className="text-[10px] font-black tracking-[0.6em] text-[#6db70e] dark:text-[#6bcf7f] uppercase mt-4 block">
               Bazaar Community
             </span>
-            <div className="h-1.5 w-24 bg-[#6db70e] rounded-full shadow-[0_0_15px_rgba(109,183,14,0.3)] mt-8" />
+            <div className="h-1.5 w-24 bg-[#6db70e] dark:bg-[#7ecf55] rounded-full mt-8" />
           </div>
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium mt-10">
+          <p className="text-xl text-slate-500 dark:text-[#888888] max-w-2xl mx-auto leading-relaxed font-medium mt-10">
             Discover cooking tips, recipes, and stories from our talented chef community.
           </p>
         </motion.div>
@@ -84,7 +84,7 @@ const BlogSection = () => {
           {blogPosts.map((post, index) => (
             <motion.article
               key={post.id}
-              className="group bg-white rounded-[2.5rem] overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(109,183,14,0.1)] border border-slate-50 transition-all duration-500 hover:-translate-y-2 flex flex-col"
+              className="group bg-white dark:bg-[#111111] rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl border border-slate-50 dark:border-[#242424] dark:border-[0.5px] transition-all duration-500 hover:-translate-y-2 flex flex-col"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -97,49 +97,49 @@ const BlogSection = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute top-6 left-6">
-                  <span className="px-4 py-1.5 bg-white/95 backdrop-blur-md text-[#6db70e] text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                  <span className="px-4 py-1.5 bg-white/95 dark:bg-[#151515]/95 backdrop-blur-md dark:backdrop-filter-none text-[#6db70e] dark:text-[#7ecf55] text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg border dark:border-[#242424] dark:border-[0.5px]">
                     {post.category}
                   </span>
                 </div>
               </div>
               
               <div className="p-10 flex flex-col flex-1">
-                <div className="flex items-center gap-4 mb-5 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                <div className="flex items-center gap-4 mb-5 text-slate-400 dark:text-[#555] text-[10px] font-black uppercase tracking-widest">
                   <div className="flex items-center gap-1.5">
-                    <FiCalendar className="text-[#6db70e]" />
+                    <FiCalendar className="text-[#6db70e] dark:text-[#6bcf7f]" />
                     <span>{post.date}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <FiClock className="text-[#6db70e]" />
+                    <FiClock className="text-[#6db70e] dark:text-[#6bcf7f]" />
                     <span>{post.readTime}</span>
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-black mb-4 text-slate-900 group-hover:text-[#6db70e] transition-colors duration-300 leading-tight">
+                <h3 className="text-2xl font-black mb-4 text-slate-900 dark:text-[#e8e8e8] group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-colors duration-300 leading-tight">
                   {post.title}
                 </h3>
                 
-                <p className="text-slate-500 leading-relaxed mb-8 line-clamp-2 font-medium opacity-80">
+                <p className="text-slate-500 dark:text-[#8a8a8a] leading-relaxed mb-8 line-clamp-2 font-medium opacity-80">
                   {post.excerpt}
                 </p>
                 
-                <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+                <div className="mt-auto pt-6 border-t border-slate-50 dark:border-[#242424] flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img 
                       src={post.authorImage} 
                       alt={post.author} 
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-[#242424] shadow-md"
                     />
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-slate-900 uppercase tracking-wider">{post.author}</span>
-                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Featured Chef</span>
+                      <span className="text-[10px] font-black text-slate-900 dark:text-[#e8e8e8] uppercase tracking-wider">{post.author}</span>
+                      <span className="text-[8px] font-black text-slate-400 dark:text-[#555] uppercase tracking-widest">Featured Chef</span>
                     </div>
                   </div>
                   
                   <Link 
                     to={`/blog/${post.id}`}
                     onClick={scrollToTop}
-                    className="w-11 h-11 rounded-full bg-slate-50 flex items-center justify-center text-[#6db70e] hover:bg-[#6db70e] hover:text-white transition-all duration-300 shadow-sm"
+                    className="w-11 h-11 rounded-full bg-slate-50 dark:bg-[#0f0f0f] flex items-center justify-center text-[#6db70e] dark:text-[#7ecf55] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] hover:text-white dark:hover:text-[#0f0f0f] transition-all duration-300 shadow-sm border dark:border-[#242424] dark:border-[0.5px]"
                   >
                     <FiArrowRight size={18} />
                   </Link>
@@ -151,7 +151,7 @@ const BlogSection = () => {
 
         <div className="text-center mt-20">
           <Link to="/blog" onClick={scrollToTop}>
-            <button className="px-12 py-4 border-2 border-slate-900/10 rounded-full text-slate-900 font-black text-xs uppercase tracking-[0.4em] hover:border-[#6db70e] hover:text-[#6db70e] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-xl bg-white cursor-pointer group">
+            <button className="px-12 py-4 border-2 border-slate-900/10 dark:border-[#242424] dark:border-[0.5px] rounded-full text-slate-900 dark:text-[#e0e0e0] font-black text-xs uppercase tracking-[0.4em] hover:border-[#6db70e] dark:hover:border-[#7ecf55] hover:text-[#6db70e] dark:hover:text-[#7ecf55] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-xl dark:bg-[#111111] bg-white cursor-pointer group">
               <span className="relative z-10">Explore All Stories</span>
             </button>
           </Link>

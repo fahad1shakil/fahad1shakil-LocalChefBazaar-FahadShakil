@@ -2,7 +2,7 @@ import React from 'react'
 import UserAside from '../Componentes/Asideber/UserAside'
 import { Outlet } from 'react-router'
 
-const Dashbord = () => {
+const Dashboard = () => {
   return (
     <div>
       <UserAside />
@@ -11,4 +11,4 @@ const Dashbord = () => {
   )
 }
 
-export default Dashbord
+export default Dashboard

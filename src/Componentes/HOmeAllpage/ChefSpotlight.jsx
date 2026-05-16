@@ -44,29 +44,29 @@ const ChefSpotlight = () => {
   ];
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-24 px-6 bg-white dark:bg-[#0f0f0f] transition-colors duration-500">
       <div className="max-w-7xl mx-auto">
         {/* Banner Style Header */}
         <motion.div
-          className="relative bg-slate-900 rounded-[2.5rem] p-12 mb-16 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.2)] group"
+          className="relative bg-slate-900 dark:bg-[#111111] rounded-[2.5rem] p-12 mb-16 overflow-hidden shadow-2xl border dark:border-[#242424] dark:border-[0.5px] group"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 left-0 w-80 h-80 bg-[#6db70e]/10 rounded-full blur-3xl -ml-32 -mt-32 group-hover:bg-[#6db70e]/20 transition-all duration-1000" />
-          <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-2xl -mr-20 -mb-20 group-hover:bg-orange-500/20 transition-all duration-1000" />
+          {/* Decorative Background Elements - Hidden in dark mode */}
+          <div className="absolute top-0 left-0 w-80 h-80 bg-[#6db70e]/10 dark:hidden rounded-full blur-3xl -ml-32 -mt-32 group-hover:bg-[#6db70e]/20 transition-all duration-1000" />
+          <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-500/10 dark:hidden rounded-full blur-2xl -mr-20 -mb-20 group-hover:bg-orange-500/20 transition-all duration-1000" />
           
           <div className="relative z-10 text-center flex flex-col items-center">
-            <span className="text-[#6db70e] text-xs font-black uppercase tracking-[0.5em] mb-4 block">Our Culinary Legends</span>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter leading-tight uppercase">
-              Meet Our <span className="text-[#6db70e]">Featured Chefs</span>
+            <span className="text-[#6db70e] dark:text-[#7ecf55] text-xs font-black uppercase tracking-[0.5em] mb-4 block">Our Culinary Legends</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white dark:text-[#e0e0e0] mb-6 tracking-tighter leading-tight uppercase">
+              Meet Our <span className="text-[#6db70e] dark:text-[#7ecf55]">Featured Chefs</span>
             </h2>
-            <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed opacity-80 uppercase tracking-widest">
+            <p className="text-slate-400 dark:text-[#888888] text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed opacity-80 uppercase tracking-widest">
               Talented local chefs bringing authentic flavors and culinary expertise to your doorstep
             </p>
-            <div className="mt-8 h-1.5 w-24 bg-[#6db70e] rounded-full shadow-[0_0_15px_rgba(109,183,14,0.5)]" />
+            <div className="mt-8 h-1.5 w-24 bg-[#6db70e] dark:bg-[#7ecf55] rounded-full" />
           </div>
         </motion.div>
 
@@ -74,7 +74,7 @@ const ChefSpotlight = () => {
           {featuredChefs.map((chef, index) => (
             <motion.div
               key={chef.id}
-              className="group relative bg-white rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden hover:shadow-[0_30px_70px_rgba(0,0,0,0.08)] transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
+              className="group relative bg-white dark:bg-[#111111] rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-[#242424] dark:border-[0.5px] overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -87,17 +87,17 @@ const ChefSpotlight = () => {
                   alt={chef.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-[#0f0f0f]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 {/* Badges */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
-                  <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl flex items-center gap-2 shadow-xl border border-white/20">
-                    <FiStar className="text-[#6db70e] fill-current" size={16} />
-                    <span className="font-black text-slate-900 text-sm">{chef.rating}</span>
+                  <div className="bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur-md px-4 py-2 rounded-2xl flex items-center gap-2 shadow-xl border border-white/20 dark:border-[#242424] dark:border-[0.5px]">
+                    <FiStar className="text-[#6db70e] dark:text-[#7ecf55] fill-current" size={16} />
+                    <span className="font-black text-slate-900 dark:text-[#e0e0e0] text-sm">{chef.rating}</span>
                   </div>
                 </div>
 
-                <div className="absolute bottom-4 left-4 bg-[#6db70e] text-white px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl border border-white/20">
+                <div className="absolute bottom-4 left-4 bg-[#6db70e] dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl border border-white/20 dark:border-[#242424] dark:border-[0.5px]">
                   {chef.orders} Orders
                 </div>
               </div>
@@ -106,40 +106,40 @@ const ChefSpotlight = () => {
               <div className="p-8 pt-4 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-2xl font-black text-slate-900 tracking-tighter group-hover:text-[#6db70e] transition-colors duration-300">
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-[#e0e0e0] tracking-tighter group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-colors duration-300">
                       {chef.name}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <FiMapPin className="text-[#6db70e]" size={14} />
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      <FiMapPin className="text-[#6db70e] dark:text-[#7ecf55]" size={14} />
+                      <span className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-widest">
                         {chef.location}
                       </span>
                     </div>
                   </div>
-                  <div className="w-10 h-10 rounded-xl bg-[#6db70e]/10 flex items-center justify-center border border-[#6db70e]/20">
-                    <FiAward className="text-[#6db70e]" size={20} />
+                  <div className="w-10 h-10 rounded-xl bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 flex items-center justify-center border border-[#6db70e]/20 dark:border-[#7ecf55]/20">
+                    <FiAward className="text-[#6db70e] dark:text-[#7ecf55]" size={20} />
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-black text-[#6db70e] uppercase tracking-widest">
+                  <span className="px-3 py-1 bg-slate-50 dark:bg-[#0f0f0f] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] rounded-lg text-[10px] font-black text-[#6db70e] dark:text-[#7ecf55] uppercase tracking-widest">
                     {chef.specialty}
                   </span>
-                  <span className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <span className="px-3 py-1 bg-slate-50 dark:bg-[#0f0f0f] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] rounded-lg text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-widest">
                     {chef.experience} Exp
                   </span>
                 </div>
 
-                <div className="p-5 bg-slate-50 rounded-[1.5rem] border border-slate-100 mb-6 group-hover:bg-white group-hover:border-[#6db70e]/20 transition-all duration-300">
-                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
-                    <div className="w-4 h-[2px] bg-[#6db70e]" /> Signature Dish
+                <div className="p-5 bg-slate-50 dark:bg-[#0f0f0f] rounded-[1.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] mb-6 group-hover:bg-white dark:group-hover:bg-[#111111] group-hover:border-[#6db70e]/20 dark:group-hover:border-[#7ecf55]/20 transition-all duration-300">
+                  <h4 className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                    <div className="w-4 h-[2px] bg-[#6db70e] dark:bg-[#7ecf55]" /> Signature Dish
                   </h4>
-                  <p className="text-slate-900 font-black text-base tracking-tight leading-tight">
+                  <p className="text-slate-900 dark:text-[#e0e0e0] font-black text-base tracking-tight leading-tight">
                     {chef.signature}
                   </p>
                 </div>
 
-                <p className="text-slate-500 text-sm font-medium leading-relaxed line-clamp-2 mb-8 flex-1 italic opacity-80">
+                <p className="text-slate-500 dark:text-[#8a8a8a] text-sm font-medium leading-relaxed line-clamp-2 mb-8 flex-1 italic opacity-80">
                   "{chef.bio}"
                 </p>
 
@@ -147,7 +147,7 @@ const ChefSpotlight = () => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl text-xs uppercase tracking-[0.3em] hover:bg-[#6db70e] hover:shadow-[0_15px_30px_rgba(109,183,14,0.3)] transition-all duration-300 shadow-lg border border-white/5"
+                    className="w-full py-4 bg-slate-900 dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] font-black rounded-2xl text-xs uppercase tracking-[0.3em] hover:bg-[#6db70e] dark:hover:bg-[#5ab86e] transition-all duration-300 shadow-xl border border-white/5 dark:border-[#242424] dark:border-[0.5px]"
                   >
                     Explore Menu
                   </motion.button>
@@ -168,7 +168,7 @@ const ChefSpotlight = () => {
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="px-12 py-5 bg-slate-900 text-white font-black rounded-[1.2rem] text-sm uppercase tracking-[0.3em] shadow-[0_15px_40px_rgba(0,0,0,0.2)] hover:bg-[#6db70e] hover:shadow-[0_15px_40px_rgba(109,183,14,0.3)] transition-all duration-300"
+              className="px-12 py-5 bg-slate-900 dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] font-black rounded-[1.2rem] text-sm uppercase tracking-[0.3em] shadow-2xl hover:bg-[#6db70e] dark:hover:bg-[#5ab86e] transition-all duration-300 border dark:border-[#242424] dark:border-[0.5px]"
             >
               Meet All Our Chefs
             </motion.button>

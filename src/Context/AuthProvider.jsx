@@ -73,14 +73,20 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      setLoading(true);
-
       if (currentUser) {
         try {
           const response = await axios.get(
             `${import.meta.env.VITE_BACKEND_API}/check-role/${currentUser.email}`
           );
-          setRole(response.data.role || 'user');
+          
+          if (response.data.status === 'banned' || response.data.role === 'banned') {
+            await signOut(auth);
+            setUser(null);
+            setRole('');
+            alert('Your account has been permanently banned from LocalChefBazaar.');
+          } else {
+            setRole(response.data.role || 'user');
+          }
         } catch (error) {
           console.error('Error fetching role:', error);
           setRole('user');

@@ -10,7 +10,7 @@ const PaymentCancel = () => {
       </h1>
       <p>Your payment was not completed. You can try again.</p>
       <Link
-        to="/dashbord/myorder"
+        to="/dashboard/myorder"
         className="text-blue-500 underline mt-4 inline-block"
       >
         Back to Orders

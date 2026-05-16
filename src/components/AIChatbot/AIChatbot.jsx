@@ -200,18 +200,40 @@ const AIChatbot = () => {
   return (
     <>
       {/* Chat Toggle Button */}
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white p-4 rounded-full shadow-[0_10px_30px_rgba(109,183,14,0.3)] border border-[#6db70e]/30 hover:shadow-[0_15px_40px_rgba(109,183,14,0.5)] transition-all duration-300 cursor-pointer"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        animate={{ 
-          rotate: isOpen ? 180 : 0,
-          backgroundColor: isOpen ? '#1e293b' : '#0f172a'
-        }}
-      >
-        {isOpen ? <FiX size={24} className="text-[#6db70e]" /> : <FiMessageCircle size={24} className="text-[#6db70e]" />}
-      </motion.button>
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+        <AnimatePresence>
+          {!isOpen && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="bg-[#6db70e] text-white text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-lg shadow-lg mb-1 hidden md:block"
+            >
+              AI Assistant
+              <div className="absolute -bottom-1 right-4 w-2 h-2 bg-[#6db70e] rotate-45"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <motion.button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-white p-4 rounded-full shadow-[0_10px_30px_rgba(109,183,14,0.2)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] border border-slate-200 dark:border-[#6db70e]/30 hover:shadow-[0_15px_40px_rgba(109,183,14,0.4)] transition-all duration-300 cursor-pointer group relative"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          animate={{ 
+            rotate: isOpen ? 180 : 0
+          }}
+        >
+          {isOpen ? (
+            <FiX size={24} className="text-[#6db70e]" />
+          ) : (
+            <>
+              <FiMessageCircle size={24} className="text-[#6db70e] group-hover:scale-110 transition-transform" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#6db70e] rounded-full border-2 border-white dark:border-[#0f172a] animate-pulse"></span>
+            </>
+          )}
+        </motion.button>
+      </div>
 
       {/* Chat Window */}
       <AnimatePresence>
@@ -220,46 +242,52 @@ const AIChatbot = () => {
             initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-24 right-6 z-40 w-96 max-w-[calc(100vw-3rem)] h-[500px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 z-40 w-96 max-w-[calc(100vw-3rem)] h-[500px] bg-white dark:bg-[#121212] rounded-2xl shadow-2xl border border-slate-100 dark:border-[#242424] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-slate-900 border-b border-[#6db70e]/20 text-white p-4 flex items-center gap-3">
+            <div className="bg-slate-50 dark:bg-[#151515] border-b border-slate-100 dark:border-[#6db70e]/20 text-slate-900 dark:text-white p-4 flex items-center gap-3">
               <div className="w-10 h-10 bg-[#6db70e]/10 border border-[#6db70e]/30 rounded-full flex items-center justify-center">
                 <FiMessageCircle size={20} className="text-[#6db70e]" />
               </div>
-              <div>
-                <h3 className="text-lg font-black tracking-tighter leading-none">
+              <div className="flex-1">
+                <h3 className="text-lg font-black tracking-tighter leading-none text-slate-900 dark:text-[#e8e8e8]">
                   LocalChef<span className="text-[#6db70e]">Bazaar</span>
                 </h3>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mt-1">
-                  AI Assistant Developed By <span className="text-[#6db70e]">Fahad Shakil</span>
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-[#888888] mt-1">
+                  AI Assistant <span className="hidden sm:inline">Developed By</span> <span className="text-[#6db70e]">Fahad Shakil</span>
                 </p>
               </div>
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-400"
+              >
+                <FiX size={18} />
+              </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-[#121212]">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`flex items-start gap-2 max-w-[80%] ${message.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                       message.sender === 'user' 
-                        ? 'bg-[#6db70e] text-white' 
-                        : 'bg-white border border-[#6db70e]/20 text-[#6db70e]'
+                        ? 'bg-[#6db70e] text-white shadow-md' 
+                        : 'bg-slate-50 dark:bg-[#151515] border border-slate-100 dark:border-[#242424] text-[#6db70e]'
                     }`}>
-                      {message.sender === 'user' ? <FiUser size={16} /> : <FiMessageCircle size={16} />}
+                      {message.sender === 'user' ? <FiUser size={14} /> : <FiMessageCircle size={14} />}
                     </div>
                     <div className={`p-3 rounded-2xl shadow-sm ${
                       message.sender === 'user'
-                        ? 'bg-[#6db70e] text-white rounded-br-md'
-                        : 'bg-white border border-slate-100 text-slate-800 rounded-bl-md'
+                        ? 'bg-[#6db70e] text-white rounded-br-sm'
+                        : 'bg-slate-50 dark:bg-[#151515] border border-slate-100 dark:border-[#242424] text-slate-800 dark:text-[#e0e0e0] rounded-bl-sm'
                     }`}>
                       <p className="text-sm font-medium leading-relaxed">{message.text}</p>
-                      <p className={`text-[10px] font-black uppercase tracking-widest mt-2 opacity-70 ${
-                        message.sender === 'user' ? 'text-white' : 'text-slate-400'
+                      <p className={`text-[9px] font-black uppercase tracking-widest mt-2 opacity-60 ${
+                        message.sender === 'user' ? 'text-white' : 'text-slate-400 dark:text-[#888888]'
                       }`}>
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
@@ -272,14 +300,14 @@ const AIChatbot = () => {
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="flex items-start gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                      <FiMessageCircle size={16} className="text-gray-600 dark:text-gray-300" />
+                    <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-[#151515] flex items-center justify-center border border-slate-100 dark:border-[#242424]">
+                      <FiMessageCircle size={14} className="text-[#6db70e]" />
                     </div>
-                    <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-2xl rounded-bl-md">
+                    <div className="bg-slate-50 dark:bg-[#151515] p-3 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-[#242424]">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-1.5 h-1.5 bg-[#6db70e]/60 rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 bg-[#6db70e]/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-1.5 h-1.5 bg-[#6db70e]/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
                     </div>
                   </div>
@@ -291,14 +319,14 @@ const AIChatbot = () => {
 
             {/* Quick Actions */}
             {messages.length <= 1 && (
-              <div className="px-4 pb-2">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Quick actions:</p>
-                <div className="flex flex-wrap gap-2">
+              <div className="px-4 pb-3 bg-white dark:bg-[#121212]">
+                <p className="text-[10px] font-black text-slate-400 dark:text-[#555555] uppercase tracking-widest mb-2 px-1">Quick actions:</p>
+                <div className="flex flex-wrap gap-1.5">
                   {quickActions.map((action, index) => (
                     <button
                       key={index}
                       onClick={() => handleQuickAction(action)}
-                      className="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900 hover:text-orange-600 dark:hover:text-orange-400 transition-colors cursor-pointer"
+                      className="text-[10px] px-3 py-1.5 bg-slate-50 dark:bg-[#151515] text-slate-600 dark:text-[#888888] font-black uppercase tracking-wider rounded-lg border border-slate-100 dark:border-[#242424] hover:bg-[#6db70e]/10 hover:text-[#6db70e] dark:hover:text-[#7ecf55] transition-all cursor-pointer"
                     >
                       {action}
                     </button>
@@ -307,26 +335,29 @@ const AIChatbot = () => {
               </div>
             )}
 
-            {/* Input */}
-            <div className="p-4 bg-white border-t border-slate-100">
-              <div className="flex gap-2 relative">
+            {/* Input Area */}
+            <div className="p-4 bg-slate-50 dark:bg-[#111111] border-t border-slate-100 dark:border-[#242424]">
+              <div className="flex gap-2 relative group/input">
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything..."
-                  className="flex-1 px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-[#6db70e] focus:bg-white transition-all text-sm font-medium text-slate-800"
+                  placeholder="Ask about meals, chefs..."
+                  className="flex-1 px-5 py-3 bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#242424] rounded-2xl focus:outline-none focus:border-[#6db70e] dark:focus:border-[#7ecf55] transition-all text-sm font-bold text-slate-800 dark:text-[#e0e0e0] placeholder-slate-400 dark:placeholder-slate-600 shadow-sm"
                   disabled={isTyping}
                 />
                 <button
                   onClick={handleSendMessage}
                   disabled={!inputMessage.trim() || isTyping}
-                  className="absolute right-2 top-2 p-2 bg-[#6db70e] text-white rounded-xl hover:bg-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-md"
+                  className="absolute right-1.5 top-1.5 p-2.5 bg-[#6db70e] text-white rounded-xl hover:bg-slate-900 dark:hover:bg-[#7ecf55] dark:hover:text-[#0f0f0f] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-lg active:scale-95"
                 >
                   <FiSend size={16} />
                 </button>
               </div>
+              <p className="text-[8px] text-center mt-3 text-slate-400 dark:text-[#555555] font-black uppercase tracking-[0.3em]">
+                LocalChefBazaar AI Assistant
+              </p>
             </div>
           </motion.div>
         )}

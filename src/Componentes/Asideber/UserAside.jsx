@@ -76,49 +76,49 @@ const UserAside = () => {
   };
 
   const linkStyle =
-    'flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-[#6db70e]/10 hover:text-[#6db70e] transition-all duration-300 cursor-pointer group';
-  const activeStyle = 'bg-[#6db70e]/10 text-[#6db70e] border-l-4 border-[#6db70e] shadow-sm';
+    'flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-slate-500 dark:text-[#888888] hover:bg-[#6db70e]/10 dark:hover:bg-[#7ecf55]/10 hover:text-[#6db70e] dark:hover:text-[#7ecf55] transition-all duration-300 cursor-pointer group';
+  const activeStyle = 'bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 text-[#6db70e] dark:text-[#7ecf55] border-l-4 border-[#6db70e] dark:border-[#7ecf55] shadow-sm';
 
   // Role-based menu items
-  const getMenuItems = () => {
-    const commonItems = [
-      { to: '', icon: <MdDashboard />, label: 'Dashboard Overview' },
-      { to: 'profile', icon: <FaUser />, label: 'My Profile' },
-    ];
+    const getMenuItems = () => {
+      const commonItems = [
+        { to: '/dashboard/overview', icon: <MdDashboard />, label: 'Dashboard Overview' },
+        { to: '/dashboard/profile', icon: <FaUser />, label: 'My Profile' },
+      ];
 
     switch (role) {
       case 'admin':
         return [
           ...commonItems,
-          { to: 'manageuser', icon: <FiUsers />, label: 'Manage Users' },
-          { to: 'managerequest', icon: <MdPendingActions />, label: 'Manage Requests' },
-          { to: 'StatisticsPage', icon: <FiBarChart />, label: 'Analytics & Reports' },
-          { to: 'settings', icon: <FiSettings />, label: 'System Settings' },
+          { to: '/dashboard/manageuser', icon: <FiUsers />, label: 'Manage Users' },
+          { to: '/dashboard/managerequest', icon: <MdPendingActions />, label: 'Manage Requests' },
+          { to: '/dashboard/StatisticsPage', icon: <MdAnalytics />, label: 'Market Analytics' },
+          { to: '/dashboard/settings', icon: <FiSettings />, label: 'System Settings' },
         ];
       
       case 'chef':
         return [
           ...commonItems,
-          { to: 'addmeals', icon: <MdRestaurantMenu />, label: 'Create Meal' },
-          { to: 'mymeals', icon: <MdRestaurant />, label: 'My Meals' },
-          { to: 'orderreq', icon: <MdPendingActions />, label: 'Order Requests' },
-          { to: 'analytics', icon: <MdAnalytics />, label: 'My Analytics' },
+          { to: '/dashboard/addmeals', icon: <MdRestaurantMenu />, label: 'Create Meal' },
+          { to: '/dashboard/mymeals', icon: <MdRestaurant />, label: 'My Meals' },
+          { to: '/dashboard/orderreq', icon: <MdPendingActions />, label: 'Order Requests' },
+          { to: '/dashboard/analytics', icon: <MdAnalytics />, label: 'Chef Analytics' },
         ];
       
       case 'manager':
         return [
           ...commonItems,
-          { to: 'manageuser', icon: <FiUsers />, label: 'Manage Users' },
-          { to: 'managerequest', icon: <MdPendingActions />, label: 'Manage Requests' },
-          { to: 'reports', icon: <FaChartLine />, label: 'Reports' },
+          { to: '/dashboard/manageuser', icon: <FiUsers />, label: 'Manage Users' },
+          { to: '/dashboard/managerequest', icon: <MdPendingActions />, label: 'Manage Requests' },
+          { to: '/dashboard/reports', icon: <FaChartLine />, label: 'Reports' },
         ];
       
       default: // user
         return [
           ...commonItems,
-          { to: 'myorder', icon: <FaShoppingBag />, label: 'My Orders' },
-          { to: 'reviews', icon: <FaStar />, label: 'My Reviews' },
-          { to: 'favoritemeal', icon: <FaHeart />, label: 'Favorite Meals' },
+          { to: '/dashboard/myorder', icon: <FaShoppingBag />, label: 'My Orders' },
+          { to: '/dashboard/reviews', icon: <FaStar />, label: 'My Reviews' },
+          { to: '/dashboard/favoritemeal', icon: <FaHeart />, label: 'Favorite Meals' },
         ];
     }
   };
@@ -126,40 +126,42 @@ const UserAside = () => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="p-6 flex flex-col h-full bg-white shadow-[10px_0_40px_rgba(0,0,0,0.03)] border-r border-slate-100 relative z-20 w-full lg:w-[280px]">
+    <div className="p-6 flex flex-col h-full bg-white dark:bg-[#151515] shadow-[10px_0_40px_rgba(0,0,0,0.03)] border-r border-slate-100 dark:border-[#242424] dark:border-[0.5px] relative z-20 w-full lg:w-[280px] transition-colors duration-500">
       {/* Logo and Brand */}
-      <Link to="/" className="flex items-center gap-1 mb-10 pb-6 border-b border-slate-100 group">
-        <div className="w-14 h-14 overflow-hidden flex items-center justify-center -ml-2">
+      <Link to="/" className="flex flex-col items-center gap-3 mb-10 pb-6 border-b border-slate-100 dark:border-[#242424] group">
+        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#111111] border-2 border-slate-100 dark:border-[#242424] shadow-md group-hover:border-[#6db70e] transition-all duration-300">
             <img 
-              src="/Adobe Express - file.png" 
+              src="/logo.png" 
               alt="Chef Logo" 
-              className="w-[180%] max-w-none object-contain transition-transform duration-300 group-hover:scale-110"
+              className="w-[110%] h-[110%] max-w-none object-contain transition-transform duration-300 group-hover:scale-110"
               style={{ filter: 'hue-rotate(-30deg) saturate(1.4) brightness(0.9)' }}
             />
         </div>
-        <div className="flex flex-col justify-center">
-            <span className="text-2xl font-black tracking-tighter text-slate-900 leading-none group-hover:text-[#6db70e] transition-colors">
+        <div className="flex flex-col items-center text-center">
+            <span className="text-2xl md:text-3xl font-black tracking-tighter text-slate-900 dark:text-[#e0e0e0] leading-none group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-colors">
               LocalChef
             </span>
-            <span className="text-[10px] font-black tracking-[0.5em] text-[#6db70e] uppercase mt-1">
+            <span className="text-[10px] font-black tracking-[0.5em] text-[#6db70e] dark:text-[#7ecf55] uppercase mt-1">
               Bazaar
             </span>
         </div>
       </Link>
 
       {/* User Info */}
-      <div className="mb-8 flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm group hover:border-[#6db70e]/30 transition-colors">
-        <img
-          src={user?.photoURL || 'https://i.ibb.co/7CMqG7N/default-avatar.jpg'}
-          className="w-12 h-12 rounded-full border-2 border-[#6db70e] object-cover shadow-md"
-          alt="Profile"
-        />
+      <div className="mb-8 flex items-center gap-3 p-4 bg-slate-50 dark:bg-[#121212] rounded-2xl border border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-sm group hover:border-[#6db70e]/30 dark:hover:border-[#7ecf55]/30 transition-colors">
+          <div className="relative">
+            <img
+              src={user?.photoURL || 'https://i.ibb.co/7CMqG7N/default-avatar.jpg'}
+              className="w-12 h-12 rounded-2xl border-2 border-white dark:border-slate-800 object-cover shadow-xl"
+              alt="Profile"
+            />
+          </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-bold text-slate-900 truncate">
+          <h4 className="font-bold text-slate-900 dark:text-[#e0e0e0] truncate">
             {user?.displayName || 'User'}
           </h4>
-          <p className="text-[11px] text-slate-500 truncate mb-1">{user?.email}</p>
-          <span className="inline-block px-2.5 py-0.5 text-[10px] font-bold bg-[#6db70e]/10 text-[#6db70e] rounded-full uppercase tracking-wider">
+          <p className="text-[11px] text-slate-500 dark:text-[#888888] truncate mb-1">{user?.email}</p>
+          <span className="inline-block px-2.5 py-0.5 text-[10px] font-bold bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 text-[#6db70e] dark:text-[#7ecf55] rounded-full uppercase tracking-wider">
             {role}
           </span>
         </div>
@@ -186,8 +188,8 @@ const UserAside = () => {
         ))}
 
         {/* Quick Actions */}
-        <div className="mt-8 pt-6 border-t border-slate-100">
-          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 pl-2">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-[#242424]">
+          <h3 className="text-[10px] font-black text-slate-400 dark:text-[#555555] uppercase tracking-widest mb-3 pl-2">
             Quick Actions
           </h3>
           
@@ -204,10 +206,10 @@ const UserAside = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="mt-6 pt-6 border-t border-slate-100">
+      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-[#242424]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all duration-300 font-bold shadow-sm group"
+          className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-500 rounded-xl hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition-all duration-300 font-bold shadow-sm group border dark:border-red-900/30"
         >
           <FaSignOutAlt className="text-lg group-hover:-translate-x-1 transition-transform" />
           <span>Logout securely</span>
