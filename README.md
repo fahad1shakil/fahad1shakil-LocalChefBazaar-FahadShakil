@@ -2,9 +2,9 @@
 ### A Full Stack MERN Marketplace for Local Home-Cooked Meals
 
 🌐 **Live Website**  
-[Live Link Coming Soon]  
-Admin Email: [Provided on Request]  
-Admin Password: [Provided on Request]  
+[Live Link : https://localchefbazzar-fahadshakil.netlify.app/]  
+Admin Email: [fahad10pic@gmail.com]  
+Admin Password: [fahad10pic]  
 ---
 
 ## 📌 Project Description
@@ -100,9 +100,8 @@ Each role has **separate protected routes and permissions**.
 
 > ⚠️ Demo credentials for testing purposes only
 
-**Admin Email: [Provided on Request]
-**Admin Password: [Provided on Request]
-
+Admin Email: [fahad10pic@gmail.com]  
+Admin Password: [fahad10pic]  
 
 You can also create a new user account and request for the **Chef role** from the user dashboard.
 
