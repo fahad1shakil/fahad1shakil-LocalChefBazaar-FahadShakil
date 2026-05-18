@@ -239,6 +239,7 @@ npm run dev
 | ![home](./screenshots/home.png) | ![details](./screenshots/details.png) | ![admin](./screenshots/admin.png) |
 
 ---
+![Uploading screencapture-localchefbazzar-fahad-shakil-netlify-app-2026-05-19-01_14_22.png…]()
 
 ## 👤 Author
 
