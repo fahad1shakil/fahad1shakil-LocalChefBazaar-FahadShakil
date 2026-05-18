@@ -2,9 +2,9 @@
 ### A Full Stack MERN Marketplace for Local Home-Cooked Meals
 
 🌐 **Live Website**  
-[Live Link Coming Soon]  
-Admin Email: [Provided on Request]  
-Admin Password: [Provided on Request]  
+[🔗Live Link : https://localchefbazzar-fahad-shakil.netlify.app/]  
+Admin Email: [fahad10pic@gmail.com ]  
+Admin Password: [fahad10pic]  
 ---
 
 ## 📌 Project Description
