@@ -16,11 +16,11 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[280px_1fr] bg-gray-50 dark:bg-[#121212] transition-colors duration-300">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[280px_1fr] bg-gray-50 dark:bg-[#0f0f0f] transition-colors duration-300">
       <title>LocalChefBazaar || Dashboard</title>
       
       {/* Sidebar */}
-      <aside className="border-r border-gray-200 dark:border-[#242424] bg-white dark:bg-[#151515] sticky top-0 h-screen hidden lg:block shadow-lg">
+      <aside className="border-r border-gray-200 dark:border-[#242424] dark:border-[0.5px] bg-white dark:bg-[#111111] sticky top-0 h-screen hidden lg:block shadow-lg">
         <UserAside />
       </aside>
 

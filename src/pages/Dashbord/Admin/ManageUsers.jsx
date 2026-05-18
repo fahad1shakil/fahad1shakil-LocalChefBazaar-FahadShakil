@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import toast, { Toaster } from 'react-hot-toast';
 import Loading from '../../../Componentes/Loading';
+import { AuthContext } from '../../../Context/AuthContext';
 import { 
   FiUsers, 
   FiShield, 
@@ -19,6 +20,7 @@ import {
 } from 'react-icons/fi';
 
 const ManageUsers = () => {
+  const { user, refreshRole } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,10 +33,13 @@ const ManageUsers = () => {
     setLoading(true);
     try {
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/users`);
-      setUsers(res.data.data);
+      // Resilient fallback array destructuring to ensure no page-crashing white screen
+      const list = res.data?.data || res.data || [];
+      setUsers(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error(err);
       Swal.fire('Error', 'Failed to fetch users', 'error');
+      setUsers([]); // Default empty array on failure to prevent crash
     } finally {
       setLoading(false);
     }
@@ -45,6 +50,11 @@ const ManageUsers = () => {
       await axios.put(`${import.meta.env.VITE_BACKEND_API}/users/update-role/${userId}`, { role: newRole });
       setUsers(prevUsers => prevUsers.map(u => u._id === userId ? { ...u, role: newRole } : u));
       
+      const targetUser = users.find(u => u._id === userId);
+      if (targetUser && targetUser.email?.toLowerCase() === user?.email?.toLowerCase()) {
+        await refreshRole();
+      }
+
       Swal.fire({
         title: '<span class="text-slate-900 font-black uppercase tracking-tight">Authority Granted</span>',
         html: `<p class="text-slate-500 font-medium text-sm">Target assigned to <strong>${newRole.toUpperCase()}</strong> protocol.</p>`,
@@ -64,6 +74,11 @@ const ManageUsers = () => {
       await axios.put(`${import.meta.env.VITE_BACKEND_API}/users/demote/${userId}`);
       setUsers(prevUsers => prevUsers.map(u => u._id === userId ? { ...u, role: 'user' } : u));
       
+      const targetUser = users.find(u => u._id === userId);
+      if (targetUser && targetUser.email?.toLowerCase() === user?.email?.toLowerCase()) {
+        await refreshRole();
+      }
+
       Swal.fire({
         title: '<span class="text-amber-600 font-black uppercase tracking-tight">Protocol Downgrade</span>',
         html: `<p class="text-slate-500 font-medium text-sm">Member returned to standard access status.</p>`,
@@ -210,11 +225,11 @@ const ManageUsers = () => {
                       <td className="py-6 px-8">
                         <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
                           isBoss ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
-                          user.role === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                          user.role === 'chef' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                          user.role?.toLowerCase() === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                          user.role?.toLowerCase() === 'chef' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                           'bg-slate-500/10 text-slate-500 border-slate-500/10'
                         }`}>
-                          {isBoss ? 'SUPREME BOSS' : user.role}
+                          {isBoss ? 'SUPREME BOSS' : (user.role?.toUpperCase() || 'USER')}
                         </span>
                       </td>
                       <td className="py-6 px-8">
@@ -240,7 +255,7 @@ const ManageUsers = () => {
                           ) : (
                             <>
                               <select
-                                value={user.role}
+                                value={user.role?.toLowerCase() || 'user'}
                                 onChange={(e) => handleRoleChange(user._id, e.target.value)}
                                 disabled={isBanned}
                                 className="bg-slate-50 dark:bg-slate-800 border-none text-slate-600 dark:text-white text-[10px] font-black uppercase tracking-widest rounded-xl px-4 py-2.5 outline-none focus:ring-2 ring-[#6db70e]/20 cursor-pointer disabled:opacity-30 transition-all"
@@ -301,11 +316,11 @@ const ManageUsers = () => {
                   <div className="flex flex-wrap gap-2 mb-8">
                     <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
                       isBoss ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
-                      user.role === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                      user.role === 'chef' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
+                      user.role?.toLowerCase() === 'admin' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                      user.role?.toLowerCase() === 'chef' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
                       'bg-slate-500/10 text-slate-500 border-slate-500/10'
                     }`}>
-                      {isBoss ? 'BOSS' : user.role}
+                      {isBoss ? 'BOSS' : (user.role?.toUpperCase() || 'USER')}
                     </span>
                     <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${
                       isBanned ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-[#6db70e]/10 text-[#6db70e] border-[#6db70e]/20'
@@ -322,7 +337,7 @@ const ManageUsers = () => {
                     ) : (
                       <>
                         <select
-                          value={user.role}
+                          value={user.role?.toLowerCase() || 'user'}
                           onChange={(e) => handleRoleChange(user._id, e.target.value)}
                           disabled={isBanned}
                           className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-white text-[10px] font-black uppercase tracking-widest rounded-xl px-4 py-4 outline-none focus:ring-2 ring-[#6db70e]/20"

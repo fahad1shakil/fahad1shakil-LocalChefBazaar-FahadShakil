@@ -9,7 +9,7 @@ import { FiCheck, FiX, FiMail, FiUser, FiArrowRight, FiShield, FiMapPin } from '
 const apiBase = import.meta.env.VITE_BACKEND_API;
 
 const ManageRequests = () => {
-  const { user } = useContext(AuthContext);
+  const { user, refreshRole } = useContext(AuthContext);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingIds, setProcessingIds] = useState(new Set());
@@ -78,9 +78,14 @@ const ManageRequests = () => {
   const handleApprove = async (id) => {
     startProcessing(id);
     try {
+      const requestToApprove = requests.find(r => r._id === id);
       const res = await axios.patch(`${apiBase}/role-requests/${id}/approve`);
       setRequests((prev) => prev.filter((r) => r._id !== id));
       toast.success(res.data?.message || 'Authority status upgraded', { position: 'top-center' });
+      
+      if (requestToApprove && requestToApprove.email?.toLowerCase() === user?.email?.toLowerCase()) {
+        await refreshRole();
+      }
     } catch (err) {
       console.error(err);
       toast.error('Authority upgrade failed', { position: 'top-center' });

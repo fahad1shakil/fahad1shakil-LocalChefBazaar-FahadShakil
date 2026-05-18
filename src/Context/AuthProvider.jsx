@@ -12,6 +12,20 @@ import {
 import { auth } from '../Firebase/Firebase.confige';
 import axios from 'axios';
 
+// Configure Axios request interceptor to automatically inject JWT token
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access-token');
+    if (token) {
+      config.headers.authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState('');
@@ -83,9 +97,17 @@ const AuthProvider = ({ children }) => {
             await signOut(auth);
             setUser(null);
             setRole('');
+            localStorage.removeItem('access-token');
             alert('Your account has been permanently banned from LocalChefBazaar.');
           } else {
-            setRole(response.data.role || 'user');
+            const activeRole = response.data.role || 'user';
+            setRole(activeRole);
+            
+            // Generate/Refresh JWT token matching current role
+            const jwtRes = await axios.post(`${import.meta.env.VITE_BACKEND_API}/jwt`, { email: currentUser.email });
+            if (jwtRes.data.token) {
+              localStorage.setItem('access-token', jwtRes.data.token);
+            }
           }
         } catch (error) {
           console.error('Error fetching role:', error);
@@ -93,12 +115,36 @@ const AuthProvider = ({ children }) => {
         }
       } else {
         setRole('');
+        localStorage.removeItem('access-token');
       }
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  const refreshRole = async () => {
+    if (user?.email) {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_API}/check-role/${user.email}`
+        );
+        if (response.data.role) {
+          setRole(response.data.role);
+          
+          // Generate/Refresh JWT token with the new role
+          const jwtRes = await axios.post(`${import.meta.env.VITE_BACKEND_API}/jwt`, { email: user.email });
+          if (jwtRes.data.token) {
+            localStorage.setItem('access-token', jwtRes.data.token);
+          }
+          return response.data.role;
+        }
+      } catch (error) {
+        console.error('Error refreshing role:', error);
+      }
+    }
+    return role;
+  };
 
   const authInfo = {
     user,
@@ -108,6 +154,7 @@ const AuthProvider = ({ children }) => {
     signinUser,
     signInWithGoogle,
     signoutUser,
+    refreshRole,
   };
 
   return (

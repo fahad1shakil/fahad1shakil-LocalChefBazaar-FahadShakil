@@ -19,7 +19,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 
 const Profile = () => {
-  const { user, role } = useContext(AuthContext);
+  const { user, role, refreshRole } = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chefId, setChefId] = useState(null);
@@ -39,9 +39,12 @@ const Profile = () => {
     if (user?.email) {
       const fetchUserData = async () => {
         try {
+          // Dynamic role check refresh to sync current authority immediately
+          const freshRole = await refreshRole();
+          
           const [userRes, chefRes, requestRes] = await Promise.all([
             axios.get(`${import.meta.env.VITE_BACKEND_API}/users/${user.email}`),
-            role === 'chef' ? axios.get(`${import.meta.env.VITE_BACKEND_API}/chef-id/${user.email}`) : Promise.resolve({ data: { chefId: null } }),
+            freshRole === 'chef' ? axios.get(`${import.meta.env.VITE_BACKEND_API}/chef-id/${user.email}`) : Promise.resolve({ data: { chefId: null } }),
             axios.get(`${import.meta.env.VITE_BACKEND_API}/role-requests`)
           ]);
           
@@ -55,7 +58,7 @@ const Profile = () => {
           if (chefRes.data.chefId) setChefId(chefRes.data.chefId);
 
           // Find active request for this user
-          const myRequest = requestRes.data.data?.find(r => r.userEmail === user.email && r.requestStatus === 'pending');
+          const myRequest = requestRes.data.data?.find(r => r.userEmail === user.email && (r.requestStatus === 'pending' || r.status === 'pending'));
           if (myRequest) setActiveRequest(myRequest);
 
         } catch (err) {
@@ -78,7 +81,7 @@ const Profile = () => {
       };
       fetchUserData();
     }
-  }, [user, role]);
+  }, [user?.email]);
 
   const handleUpdateProfile = async () => {
     if (!editData.name.trim()) return toast.error('Name protocol required');
@@ -163,7 +166,7 @@ const Profile = () => {
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="lg:col-span-4 bg-white dark:bg-[#151515] border border-slate-100 dark:border-white/10 p-8 md:p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden"
+            className="lg:col-span-4 bg-white dark:bg-[#111111] border border-slate-100 dark:border-white/10 p-8 md:p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <FiShield size={80} className="text-[#6db70e]" />
@@ -232,7 +235,7 @@ const Profile = () => {
                 },
                 { label: 'Reputation', value: '98%', icon: <FiAward />, color: 'text-amber-500' }
               ].map((stat, i) => (
-                <div key={i} className="bg-white dark:bg-[#151515] border border-slate-100 dark:border-white/10 p-6 rounded-[2rem] shadow-sm">
+                <div key={i} className="bg-white dark:bg-[#111111] border border-slate-100 dark:border-white/10 p-6 rounded-[2rem] shadow-sm">
                   <div className={`${stat.color} mb-3`}>{stat.icon}</div>
                   <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</h4>
                   <p className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{stat.value}</p>
@@ -245,7 +248,7 @@ const Profile = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-slate-50 dark:bg-[#151515] rounded-[3.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] p-10 md:p-12 relative overflow-hidden"
+              className="bg-slate-50 dark:bg-[#111111] rounded-[3.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] p-10 md:p-12 relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-10 opacity-5">
                 <FiEdit3 size={100} />
@@ -355,7 +358,7 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white dark:bg-[#151515] rounded-[3.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] p-10 md:p-12 shadow-xl"
+                className="bg-white dark:bg-[#111111] rounded-[3.5rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] p-10 md:p-12 shadow-xl"
               >
                 <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8 flex items-center gap-3">
                   Authority <span className="text-[#6db70e]">Evolution</span>

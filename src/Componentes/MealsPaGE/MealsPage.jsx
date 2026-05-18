@@ -7,6 +7,7 @@ const MealsPage = () => {
   const [filteredMeals, setFilteredMeals] = useState([]);
   const [allMeals, setAllMeals] = useState([]); // Store all meals for client-side filtering
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalMeals, setTotalMeals] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
@@ -46,13 +47,43 @@ const MealsPage = () => {
   const fetchAllMeals = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_API}/meals?limit=1000`);
-      if (res.data.success) {
-        setAllMeals(res.data.data);
-        setTotalMeals(res.data.data.length);
+      setError(null);
+      const apiUrl = import.meta.env.VITE_BACKEND_API;
+      
+      if (!apiUrl) {
+        throw new Error("API configuration missing. Please check your .env file for VITE_BACKEND_API.");
+      }
+
+      console.log(`🔍 Attempting to fetch meals from: ${apiUrl}/meals`);
+      
+      const res = await axios.get(`${apiUrl}/meals`, {
+        timeout: 8000 // 8 second timeout
+      });
+
+      if (res.data && res.data.success) {
+        setAllMeals(res.data.data || []);
+        setTotalMeals((res.data.data || []).length);
+      } else {
+        throw new Error(res.data?.message || "The server returned an unsuccessful response.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Database retrieval error:", err);
+      
+      let errorMessage = "Unable to connect to the culinary database.";
+      
+      if (err.code === 'ECONNABORTED') {
+        errorMessage = "The connection timed out. The server might be sleeping or under heavy load.";
+      } else if (err.response) {
+        // The request was made and the server responded with a status code
+        errorMessage = `Server Error (${err.response.status}): ${err.response.data?.message || err.message}`;
+      } else if (err.request) {
+        // The request was made but no response was received
+        errorMessage = "No response from server. Is the backend running at " + import.meta.env.VITE_BACKEND_API + "?";
+      } else {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -229,7 +260,7 @@ const MealsPage = () => {
 
   // Meal Card Component
   const MealCard = ({ meal }) => (
-    <div className="bg-white dark:bg-[#151515] rounded-[1.2rem] shadow-[0_4px_15px_rgba(0,0,0,0.02)] overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-slate-100 dark:border-[#242424] dark:border-[0.5px] cursor-pointer group"
+    <div className="bg-white dark:bg-[#111111] rounded-[1.2rem] shadow-[0_4px_15px_rgba(0,0,0,0.02)] overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col border border-slate-100 dark:border-[#242424] dark:border-[0.5px] cursor-pointer group"
       onClick={() => handleSeeDetails(meal._id)}
     >
       {/* Image */}
@@ -267,7 +298,7 @@ const MealsPage = () => {
               meal.ingredients.slice(0, 4).map((ing, i) => (
                 <span 
                   key={i} 
-                  className="max-w-[140px] truncate px-2.5 py-1 bg-slate-50 dark:bg-[#151515] text-slate-500 dark:text-[#888888] text-[10px] font-black rounded-lg border border-slate-100 dark:border-[#242424] dark:border-[0.5px] group-hover:bg-[#6db70e]/5 dark:group-hover:bg-[#7ecf55]/5 group-hover:border-[#6db70e]/20 dark:group-hover:border-[#7ecf55]/20 group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-all duration-300"
+                  className="max-w-[140px] truncate px-2.5 py-1 bg-slate-50 dark:bg-[#0f0f0f] text-slate-500 dark:text-[#888888] text-[10px] font-black rounded-lg border border-slate-100 dark:border-[#242424] dark:border-[0.5px] group-hover:bg-[#6db70e]/5 dark:group-hover:bg-[#7ecf55]/5 group-hover:border-[#6db70e]/20 dark:group-hover:border-[#7ecf55]/20 group-hover:text-[#6db70e] dark:group-hover:text-[#7ecf55] transition-all duration-300"
                   title={ing}
                 >
                   {ing}
@@ -291,12 +322,12 @@ const MealsPage = () => {
         {/* Meta Info */}
         <div className="space-y-1 mb-3">
           <div className="flex items-center justify-between text-[10px]">
-            <div className="flex items-center gap-1 text-slate-400 font-bold">
-              <FiUser className="text-[#6db70e]" size={10} />
+            <div className="flex items-center gap-1 text-slate-400 dark:text-[#888888] font-bold">
+              <FiUser className="text-[#6db70e] dark:text-[#7ecf55]" size={10} />
               <span>{meal.chefName}</span>
             </div>
-            <div className="flex items-center gap-1 text-slate-400 font-bold">
-              <FiClock className="text-slate-900" size={10} />
+            <div className="flex items-center gap-1 text-slate-400 dark:text-[#888888] font-bold">
+              <FiClock className="text-slate-900 dark:text-[#7ecf55]" size={10} />
               <span>{meal.estimatedDeliveryTime || '30'}m</span>
             </div>
           </div>
@@ -320,7 +351,7 @@ const MealsPage = () => {
             e.stopPropagation(); // Prevent double click from card
             handleSeeDetails(meal._id);
           }}
-          className="w-full flex items-center justify-center gap-1.5 bg-slate-900 dark:bg-[#151515] text-white dark:text-[#e0e0e0] py-2 rounded-[0.8rem] font-black text-[11px] uppercase tracking-wider hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] dark:hover:text-[#0f0f0f] transition-all duration-300 cursor-pointer border dark:border-[#242424] dark:border-[0.5px]"
+          className="w-full flex items-center justify-center gap-1.5 bg-slate-900 dark:bg-[#111111] text-white dark:text-[#e0e0e0] py-2 rounded-[0.8rem] font-black text-[11px] uppercase tracking-wider hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] dark:hover:text-[#0f0f0f] transition-all duration-300 cursor-pointer border dark:border-[#242424] dark:border-[0.5px]"
         >
           Details
         </button>
@@ -329,7 +360,7 @@ const MealsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#121212] py-16 font-sans transition-colors duration-500">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0f0f0f] py-16 font-sans transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-4">
         <title>LocalChefBazaar || Meals</title>
         
@@ -345,7 +376,7 @@ const MealsPage = () => {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="bg-white dark:bg-[#151515] rounded-[1.5rem] md:rounded-[2.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] p-4 md:p-8 lg:p-10 mb-8 md:mb-16">
+        <div className="bg-white dark:bg-[#111111] rounded-[1.5rem] md:rounded-[2.5rem] shadow-[0_10px_50px_rgba(0,0,0,0.03)] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] p-4 md:p-8 lg:p-10 mb-8 md:mb-16">
           {/* Search Bar */}
           <div className="flex flex-col lg:flex-row gap-4 items-center mb-6">
             <div className="flex-1 w-full relative group">
@@ -355,17 +386,17 @@ const MealsPage = () => {
                 placeholder={window.innerWidth < 768 ? "Search meals..." : "Search premium meals, chefs, or ingredients..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-2xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold placeholder-slate-400 dark:placeholder-slate-600 transition-all duration-300 outline-none text-sm md:text-base"
+                className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-3.5 md:py-5 bg-slate-50 dark:bg-[#0f0f0f] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-2xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold placeholder-slate-400 dark:placeholder-slate-600 transition-all duration-300 outline-none text-sm md:text-base"
               />
             </div>
             
             <div className="flex w-full lg:w-auto gap-3 md:gap-4">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 md:px-8 py-3.5 md:py-5 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all duration-300 ${
+                className={`flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 md:px-8 py-3.5 md:py-5 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest transition-all duration-300 cursor-pointer ${
                   showFilters 
-                    ? 'bg-[#6db70e] dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] shadow-[0_8px_20px_rgba(109,183,14,0.3)]' 
-                    : 'bg-slate-900 dark:bg-[#151515] text-white dark:text-[#e0e0e0] border dark:border-[#242424] dark:border-[0.5px] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] dark:hover:text-[#0f0f0f] hover:shadow-[0_8px_20px_rgba(109,183,14,0.3)]'
+                    ? 'bg-[#6db70e] dark:bg-[#7ecf55] text-white dark:text-[#0f0f0f] shadow-[0_8px_20px_rgba(109,183,14,0.3)] dark:shadow-[0_8px_20px_rgba(126,207,85,0.2)]' 
+                    : 'bg-slate-900 dark:bg-[#111111] text-white dark:text-[#e0e0e0] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] dark:hover:text-[#0f0f0f] hover:shadow-[0_8px_20px_rgba(109,183,14,0.3)] dark:hover:shadow-[0_8px_20px_rgba(126,207,85,0.2)]'
                 }`}
               >
                 <FiSliders size={16} />
@@ -375,7 +406,7 @@ const MealsPage = () => {
               <select
                 value={filters.sortBy}
                 onChange={(e) => handleSortChange(e.target.value)}
-                className="flex-1 lg:flex-none px-4 md:px-6 py-3.5 md:py-5 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-2xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-black text-xs md:text-sm outline-none cursor-pointer transition-all duration-300 appearance-none"
+                className="flex-1 lg:flex-none px-4 md:px-6 py-3.5 md:py-5 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-2xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-black text-xs md:text-sm outline-none cursor-pointer transition-all duration-300 appearance-none"
               >
                 {sortOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -388,7 +419,7 @@ const MealsPage = () => {
 
           {/* Advanced Filters */}
           {showFilters && (
-            <div className="border-t border-slate-100 pt-6 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="border-t border-slate-200 dark:border-[#242424] dark:border-[0.5px] pt-6 animate-in fade-in slide-in-from-top-4 duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-6">
                 {/* Category Filter */}
                 <div>
@@ -398,7 +429,7 @@ const MealsPage = () => {
                   <select
                     value={filters.category}
                     onChange={(e) => handleFilterChange('category', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs cursor-pointer"
                   >
                     {categories.map(category => (
                       <option key={category} value={category === 'All' ? '' : category}>
@@ -419,14 +450,14 @@ const MealsPage = () => {
                       placeholder="Min"
                       value={filters.priceRange.min}
                       onChange={(e) => handlePriceRangeChange('min', e.target.value)}
-                      className="w-full px-3 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                      className="w-full px-3 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
                     />
                     <input
                       type="number"
                       placeholder="Max"
                       value={filters.priceRange.max}
                       onChange={(e) => handlePriceRangeChange('max', e.target.value)}
-                      className="w-full px-3 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                      className="w-full px-3 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
                     />
                   </div>
                 </div>
@@ -439,7 +470,7 @@ const MealsPage = () => {
                   <select
                     value={filters.rating}
                     onChange={(e) => handleFilterChange('rating', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs cursor-pointer"
                   >
                     {ratingOptions.map(rating => (
                       <option key={rating} value={rating === 'All' ? '' : rating}>
@@ -457,7 +488,7 @@ const MealsPage = () => {
                   <select
                     value={filters.deliveryTime}
                     onChange={(e) => handleFilterChange('deliveryTime', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs cursor-pointer"
                   >
                     {deliveryTimeOptions.map(time => (
                       <option key={time} value={time === 'All' ? '' : time}>
@@ -475,7 +506,7 @@ const MealsPage = () => {
                   <select
                     value={filters.chefExperience}
                     onChange={(e) => handleFilterChange('chefExperience', e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#151515] border-2 border-slate-100 dark:border-[#242424] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-[#111111] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-xl focus:border-[#6db70e] dark:focus:border-[#7ecf55] focus:bg-white dark:focus:bg-[#0f0f0f] text-slate-900 dark:text-[#e0e0e0] font-bold outline-none transition-all text-xs cursor-pointer"
                   >
                     {experienceOptions.map(exp => (
                       <option key={exp} value={exp === 'All' ? '' : exp}>
@@ -488,12 +519,12 @@ const MealsPage = () => {
 
               {/* Filter Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-widest bg-slate-50 dark:bg-[#151515] px-4 py-2 rounded-full border border-slate-100 dark:border-[#242424] dark:border-[0.5px]">
+                <div className="text-[10px] font-black text-slate-400 dark:text-[#888888] uppercase tracking-widest bg-slate-50 dark:bg-[#111111] px-4 py-2 rounded-full border border-slate-150 dark:border-[#242424] dark:border-[0.5px]">
                   {filteredMeals.length} premium results
                 </div>
                 <button
                   onClick={clearFilters}
-                  className="flex items-center gap-2 px-6 py-2.5 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest hover:text-red-500 transition-all border border-slate-200 dark:border-slate-800 rounded-full hover:border-red-500"
+                  className="flex items-center gap-2 px-6 py-2.5 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-widest hover:text-red-500 transition-all border border-slate-200 dark:border-[#242424] dark:border-[0.5px] rounded-full hover:border-red-500 cursor-pointer"
                 >
                   <FiX />
                   Reset Filters
@@ -504,51 +535,51 @@ const MealsPage = () => {
           
           {/* Active Filters Display */}
           {(searchTerm || filters.category || filters.priceRange.min || filters.priceRange.max || filters.rating || filters.deliveryTime || filters.chefExperience) && (
-            <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-slate-100">
+            <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-slate-100 dark:border-[#242424] dark:border-[0.5px]">
               {searchTerm && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-[#111111] text-slate-600 dark:text-[#e0e0e0] border border-slate-200 dark:border-[#242424] dark:border-[0.5px] font-bold rounded-xl text-xs uppercase tracking-wider">
                   Search: "{searchTerm}"
-                  <button onClick={() => setSearchTerm('')} className="hover:text-red-500">
+                  <button onClick={() => setSearchTerm('')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
               )}
               {filters.category && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 text-[#6db70e] font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 text-[#6db70e] dark:text-[#7ecf55] border border-[#6db70e]/20 dark:border-[#7ecf55]/20 font-bold rounded-xl text-xs uppercase tracking-wider">
                   Category: {filters.category}
-                  <button onClick={() => handleFilterChange('category', '')} className="hover:text-red-500">
+                  <button onClick={() => handleFilterChange('category', '')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
               )}
               {(filters.priceRange.min || filters.priceRange.max) && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 text-[#6db70e] font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 text-[#6db70e] dark:text-[#7ecf55] border border-[#6db70e]/20 dark:border-[#7ecf55]/20 font-bold rounded-xl text-xs uppercase tracking-wider">
                   Price: ${filters.priceRange.min || '0'} - ${filters.priceRange.max || '∞'}
-                  <button onClick={() => handlePriceRangeChange('min', '') || handlePriceRangeChange('max', '')} className="hover:text-red-500">
+                  <button onClick={() => handlePriceRangeChange('min', '') || handlePriceRangeChange('max', '')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
               )}
               {filters.rating && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-[#111111] text-white dark:text-[#e0e0e0] border border-slate-800 dark:border-[#242424] dark:border-[0.5px] font-bold rounded-xl text-xs uppercase tracking-wider">
                   Rating: {filters.rating}
-                  <button onClick={() => handleFilterChange('rating', '')} className="hover:text-red-500">
+                  <button onClick={() => handleFilterChange('rating', '')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
               )}
               {filters.deliveryTime && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 text-[#6db70e] font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#6db70e]/10 dark:bg-[#7ecf55]/10 text-[#6db70e] dark:text-[#7ecf55] border border-[#6db70e]/20 dark:border-[#7ecf55]/20 font-bold rounded-xl text-xs uppercase tracking-wider">
                   Delivery: {filters.deliveryTime}
-                  <button onClick={() => handleFilterChange('deliveryTime', '')} className="hover:text-red-500">
+                  <button onClick={() => handleFilterChange('deliveryTime', '')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
               )}
               {filters.chefExperience && (
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider">
+                <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-[#111111] text-white dark:text-[#e0e0e0] border border-slate-800 dark:border-[#242424] dark:border-[0.5px] font-bold rounded-xl text-xs uppercase tracking-wider">
                   Experience: {filters.chefExperience}
-                  <button onClick={() => handleFilterChange('chefExperience', '')} className="hover:text-red-500">
+                  <button onClick={() => handleFilterChange('chefExperience', '')} className="hover:text-red-500 cursor-pointer">
                     <FiX size={16} />
                   </button>
                 </span>
@@ -559,7 +590,36 @@ const MealsPage = () => {
 
         {/* Meals Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
-          {loading ? (
+          {error ? (
+            // Premium glassmorphic connection error UI
+            <div className="col-span-full text-center py-16 px-6 bg-red-50/10 dark:bg-red-950/10 rounded-[2rem] border border-red-200/50 dark:border-red-900/30 shadow-[0_8px_32px_rgba(239,68,68,0.1)] backdrop-blur-md animate-in fade-in duration-300">
+              <div className="text-6xl mb-6 filter drop-shadow-[0_4px_10px_rgba(239,68,68,0.2)]">🔌</div>
+              <h3 className="text-2xl font-black text-red-600 dark:text-red-400 mb-3 tracking-tight">
+                Database & API Connection Error
+              </h3>
+              <p className="text-slate-600 dark:text-slate-400 font-bold max-w-xl mx-auto text-sm mb-8 leading-relaxed">
+                We encountered an issue establishing a connection with our culinary databases. 
+                <span className="block mt-2 font-mono text-xs text-red-500/80 dark:text-red-400/80 bg-red-100/50 dark:bg-red-950/40 p-3 rounded-xl border border-red-200/30 dark:border-red-900/20 max-w-lg mx-auto truncate">
+                  Details: {error}
+                </span>
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center items-center">
+                <button
+                  onClick={fetchAllMeals}
+                  className="flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl shadow-[0_6px_20px_rgba(220,38,38,0.4)] hover:shadow-[0_6px_25px_rgba(220,38,38,0.6)] transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 text-xs uppercase tracking-widest cursor-pointer border-none"
+                >
+                  <FiLoader className="animate-spin" size={14} />
+                  <span>Retry Connection</span>
+                </button>
+                <button
+                  onClick={clearFilters}
+                  className="px-8 py-4 bg-slate-900 dark:bg-[#111111] text-slate-200 hover:text-white font-black rounded-2xl border border-slate-200 dark:border-slate-800 hover:bg-slate-800 transition-all duration-300 text-xs uppercase tracking-widest cursor-pointer"
+                >
+                  Reset Interface
+                </button>
+              </div>
+            </div>
+          ) : loading ? (
             // Skeleton Loading
             Array.from({ length: 12 }, (_, index) => (
               <SkeletonCard key={index} />
@@ -571,7 +631,7 @@ const MealsPage = () => {
             ))
           ) : (
             // No Results
-            <div className="col-span-full text-center py-24 bg-white dark:bg-[#151515] rounded-[2rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-sm">
+            <div className="col-span-full text-center py-24 bg-white dark:bg-[#111111] rounded-[2rem] border border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-sm">
               <div className="text-6xl mb-6">🔍</div>
               <h3 className="text-2xl font-black text-slate-900 dark:text-[#e0e0e0] mb-2 tracking-tight">
                 No meals found
@@ -596,7 +656,7 @@ const MealsPage = () => {
             {hasMoreToShow && (
               <button
                 onClick={handleLoadMore}
-                className="flex items-center gap-3 px-10 py-5 bg-slate-900 dark:bg-[#151515] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] text-white dark:text-[#e0e0e0] dark:hover:text-[#0f0f0f] font-black rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_20px_rgba(109,183,14,0.4)] transform hover:-translate-y-1 transition-all duration-300 group border dark:border-[#242424] dark:border-[0.5px]"
+                className="flex items-center gap-3 px-10 py-5 bg-slate-900 dark:bg-[#111111] hover:bg-[#6db70e] dark:hover:bg-[#7ecf55] text-white dark:text-[#e0e0e0] dark:hover:text-[#0f0f0f] font-black rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_8px_20px_rgba(109,183,14,0.4)] transform hover:-translate-y-1 transition-all duration-300 group border dark:border-[#242424] dark:border-[0.5px]"
               >
                 <span>Load More Meals</span>
                 <FiChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />

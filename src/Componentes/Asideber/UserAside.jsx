@@ -126,10 +126,10 @@ const UserAside = () => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="p-6 flex flex-col h-full bg-white dark:bg-[#151515] shadow-[10px_0_40px_rgba(0,0,0,0.03)] border-r border-slate-100 dark:border-[#242424] dark:border-[0.5px] relative z-20 w-full lg:w-[280px] transition-colors duration-500">
+    <div className="p-6 flex flex-col h-full bg-white dark:bg-[#111111] shadow-[10px_0_40px_rgba(0,0,0,0.03)] border-r border-slate-100 dark:border-[#242424] dark:border-[0.5px] relative z-20 w-full lg:w-[280px] transition-colors duration-500">
       {/* Logo and Brand */}
-      <Link to="/" className="flex flex-col items-center gap-3 mb-10 pb-6 border-b border-slate-100 dark:border-[#242424] group">
-        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#111111] border-2 border-slate-100 dark:border-[#242424] shadow-md group-hover:border-[#6db70e] transition-all duration-300">
+      <Link to="/" className="flex flex-col items-center gap-3 mb-10 pb-6 border-b border-slate-100 dark:border-[#242424] dark:border-[0.5px] group">
+        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#111111] border-2 border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-md group-hover:border-[#6db70e] transition-all duration-300">
             <img 
               src="/logo.png" 
               alt="Chef Logo" 
@@ -148,11 +148,11 @@ const UserAside = () => {
       </Link>
 
       {/* User Info */}
-      <div className="mb-8 flex items-center gap-3 p-4 bg-slate-50 dark:bg-[#121212] rounded-2xl border border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-sm group hover:border-[#6db70e]/30 dark:hover:border-[#7ecf55]/30 transition-colors">
+      <div className="mb-8 flex items-center gap-3 p-4 bg-slate-50 dark:bg-[#0f0f0f] rounded-2xl border border-slate-100 dark:border-[#242424] dark:border-[0.5px] shadow-sm group hover:border-[#6db70e]/30 dark:hover:border-[#7ecf55]/30 transition-colors">
           <div className="relative">
             <img
               src={user?.photoURL || 'https://i.ibb.co/7CMqG7N/default-avatar.jpg'}
-              className="w-12 h-12 rounded-2xl border-2 border-white dark:border-slate-800 object-cover shadow-xl"
+              className="w-12 h-12 rounded-2xl border-2 border-white dark:border-[#242424] dark:border-[0.5px] object-cover shadow-xl"
               alt="Profile"
             />
           </div>
@@ -188,7 +188,7 @@ const UserAside = () => {
         ))}
 
         {/* Quick Actions */}
-        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-[#242424]">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-[#242424] dark:border-[0.5px]">
           <h3 className="text-[10px] font-black text-slate-400 dark:text-[#555555] uppercase tracking-widest mb-3 pl-2">
             Quick Actions
           </h3>
@@ -206,10 +206,10 @@ const UserAside = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-[#242424]">
+      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-[#242424] dark:border-[0.5px]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-500 rounded-xl hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition-all duration-300 font-bold shadow-sm group border dark:border-red-900/30"
+          className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-500 rounded-xl hover:bg-red-600 dark:hover:bg-red-600 hover:text-white dark:hover:text-white transition-all duration-300 font-bold shadow-sm group border border-red-200/50 dark:border-[0.5px] dark:border-red-900/30 cursor-pointer"
         >
           <FaSignOutAlt className="text-lg group-hover:-translate-x-1 transition-transform" />
           <span>Logout securely</span>
