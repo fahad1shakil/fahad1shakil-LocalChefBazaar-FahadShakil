@@ -190,7 +190,7 @@ stripe
 
 | Home Page | Meal Details | Admin Dashboard |
 |-----------|--------------|-----------------|
-| ![home](./screenshots/Home.png) | ![MealData](./screenshots/Meal.png) | ![admin](./screenshots/Dashboard.png) |
+| ![home](./screenshots-videos/Home.png) | ![MealData](./screenshots-videos/Meal.png) | ![admin](./screenshots-videos/Dashboard.png) |
 
 
 ---
