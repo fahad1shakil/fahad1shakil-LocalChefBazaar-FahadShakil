@@ -182,6 +182,16 @@ stripe
  ┣ 📂 models              # Mongoose schemas (optional)
  ┗ index.js               # Entry point
 ```
+---
+
+## 📸 Screenshots
+
+> *(Add screenshots of your Home page, Dashboard, Meal Details, etc. here)*
+
+| Home Page | Meal Details | Admin Dashboard |
+|-----------|--------------|-----------------|
+| ![home](./screenshots/Home.png) | ![MealData](./screenshots/Meal.png) | ![admin](./screenshots/Dashboard.png) |
+
 
 ---
 
@@ -243,20 +253,7 @@ npm run dev
 # Client (port 5173)
 npm run dev
 ```
-
 ---
-
-## 📸 Screenshots
-
-> *(Add screenshots of your Home page, Dashboard, Meal Details, etc. here)*
-
-| Home Page | Meal Details | Admin Dashboard |
-|-----------|--------------|-----------------|
-| ![home](./screenshots/home.png) | ![details](./screenshots/details.png) | ![admin](./screenshots/admin.png) |
-
----
-![Uploading screencapture-localchefbazzar-fahad-shakil-netlify-app-2026-05-19-01_14_22.png…]()
-
 ## 👤 Author
 
 **Your Name**
@@ -267,5 +264,4 @@ npm run dev
 ---
 
 ## 📄 License
-
 Copyright © 2025 [ Fahad Shakil ]. All rights reserved.
