@@ -264,4 +264,4 @@ npm run dev
 ---
 
 ## 📄 License
-Copyright © 2025 [ Fahad Shakil ]. All rights reserved.
+Copyright © 2026 [ Fahad Shakil ]. All rights reserved.
