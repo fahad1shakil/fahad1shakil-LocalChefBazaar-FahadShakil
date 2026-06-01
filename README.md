@@ -3,7 +3,7 @@
 
 <<<<<<< HEAD
 🌐 **Live Website**  
-[Live Link : https://localchefbazzar-fahadshakil.netlify.app/]  
+[Live Link : https://localchefbazzar-fahad-shakil.netlify.app/]  
 Admin Email: [fahad10pic@gmail.com]  
 Admin Password: [fahad10pic]  
 =======
